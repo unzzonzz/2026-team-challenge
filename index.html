@@ -161,13 +161,23 @@
   .card{
     background:var(--paper2);border:1px solid var(--line);border-radius:26px 26px 26px 60px;
     padding:26px 26px 22px;text-align:left;width:100%;display:flex;flex-direction:column;
-    transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s,border-color .25s;
+    transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .35s ease;
+    will-change:transform;
     box-shadow:0 8px 25px rgba(40,30,20,.05);
   }
   /* 카드마다 형태를 조금씩 다르게 준다 */
   .card:nth-child(3n+2){border-radius:26px 60px 26px 26px}
   .card:nth-child(3n+3){border-radius:60px 26px 26px 26px}
-  .card:hover{transform:translateY(-3px);border-color:var(--line2);box-shadow:0 14px 34px rgba(40,30,20,.09)}
+  .card:hover,.card:focus-visible{transform:translateY(-6px);border-color:transparent;
+    box-shadow:0 20px 44px rgba(40,30,20,.11)}
+  .card:active{transform:translateY(-2px) scale(.995);transition-duration:.12s}
+  /* 카드 안 요소들이 조금씩 다른 속도로 따라 움직인다 */
+  .card .blob{transition:transform .85s var(--ease),opacity .5s ease}
+  .card:hover .blob{transform:scale(1.16) rotate(9deg);opacity:.6}
+  .card .fig-wrap{transition:transform .6s var(--ease)}
+  .card:hover .fig-wrap{transform:translateY(-3px) rotate(-6deg)}
+  .card .reason{transition:background .45s ease}
+  .card:hover .reason{background:rgba(255,253,247,.92)}
   .card-enter{opacity:0;transform:translateY(24px)}
   .card-enter.on{opacity:1;transform:none;transition:opacity .6s ease,transform .7s cubic-bezier(.22,1,.36,1)}
 
@@ -2332,19 +2342,37 @@ function figSVG(p, cls){
 /* 눈이 커서를 조금 따라본다 */
 const eyePointer = { x:-9999, y:-9999, on:false };
 addEventListener("pointermove", e => { eyePointer.x = e.clientX; eyePointer.y = e.clientY; eyePointer.on = true; }, { passive:true });
+/* 눈 좌표는 캐시해 두고 읽기만 한다. 매 프레임 getBoundingClientRect를 부르면
+   레이아웃이 계속 다시 계산돼 카드 hover 같은 다른 애니메이션이 끊긴다. */
+let eyeTargets = [];
+function refreshEyeTargets(){
+  eyeTargets = [];
+  document.querySelectorAll("[data-eyes]").forEach(g => {
+    const svg = g.ownerSVGElement; if (!svg) return;
+    const r = svg.getBoundingClientRect();
+    if (!r.width) return;
+    g.style.transition = "transform .5s var(--ease)";
+    eyeTargets.push({ g, cx:r.left + r.width / 2, cy:r.top + r.height / 2, w:r.width, h:r.height });
+  });
+}
+let eyeDirty = true;
+const markEyesDirty = () => { eyeDirty = true; };
+addEventListener("scroll", markEyesDirty, { passive:true });
+addEventListener("resize", markEyesDirty);
+
 (function eyeLoop(){
-  if (!REDUCED && eyePointer.on){
-    document.querySelectorAll("[data-eyes]").forEach(g => {
-      const svg = g.ownerSVGElement; if (!svg) return;
-      const r = svg.getBoundingClientRect();
-      if (!r.width || r.bottom < 0 || r.top > innerHeight) return;
-      const dx = Math.max(-1, Math.min(1, (eyePointer.x - (r.left + r.width / 2)) / (r.width * 1.5))) * 3.4;
-      const dy = Math.max(-1, Math.min(1, (eyePointer.y - (r.top + r.height / 2)) / (r.height * 1.5))) * 2.8;
-      g.style.transform = "translate(" + dx + "px," + dy + "px)";
-      g.style.transition = "transform .5s var(--ease)";
-    });
+  if (!REDUCED){
+    if (eyeDirty) { eyeDirty = false; refreshEyeTargets(); }
+    if (eyePointer.on){
+      for (const t of eyeTargets){
+        if (t.cy < -120 || t.cy > innerHeight + 120) continue;
+        const dx = Math.max(-1, Math.min(1, (eyePointer.x - t.cx) / (t.w * 1.5))) * 3.4;
+        const dy = Math.max(-1, Math.min(1, (eyePointer.y - t.cy) / (t.h * 1.5))) * 2.8;
+        t.g.style.transform = "translate(" + dx.toFixed(2) + "px," + dy.toFixed(2) + "px)";
+      }
+    }
   }
-  setTimeout(() => requestAnimationFrame(eyeLoop), 70);
+  requestAnimationFrame(eyeLoop);
 })();
 
 /* ============================================================
@@ -2638,7 +2666,17 @@ function renderSearch(q){
       btn.addEventListener("click", () => go("/person/" + btn.getAttribute("data-person")));
     });
     requestAnimationFrame(() => {
+      eyeDirty = true;                        // 카드가 방금 붙었으니 눈 좌표를 다시 잡는다
       holder.querySelectorAll(".card-enter").forEach(c => c.classList.add("on"));
+      // 등장이 끝나면 지연과 등장용 transition을 걷어낸다.
+      // 남겨두면 hover가 카드마다 최대 220ms씩 늦게 시작해 끊겨 보인다.
+      setTimeout(() => {
+        holder.querySelectorAll(".card-enter").forEach(c => {
+          c.style.transitionDelay = "";
+          c.classList.remove("card-enter", "on");
+        });
+        eyeDirty = true;
+      }, REDUCED ? 0 : 1100);
     });
   }
 }
@@ -3021,6 +3059,7 @@ function parseHash(){
 
 function route(){
   renderToken++;
+  eyeDirty = true;
   if (tlCleanup) { tlCleanup(); tlCleanup = null; }
   if (landingCleanup) { landingCleanup(); landingCleanup = null; }
   document.documentElement.classList.remove("snap");   // 랜딩에서만 다시 켠다
