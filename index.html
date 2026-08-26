@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>선례(先例) — 먼저 간 사람들</title>
+<title>별의별 — 먼저 간 사람들</title>
 <meta name="description" content="부모님이 반대할 때, 그 길을 이미 걸어본 사람의 이야기를 찾아주는 곳." />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
 <script src="https://cdn.tailwindcss.com"></script>
@@ -77,6 +77,10 @@
 
   .brand{display:inline-flex;align-items:baseline;gap:8px;font-weight:800;font-size:19px;letter-spacing:-0.03em}
   .brand small{font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.06em}
+  .brand-star{width:19px;height:19px;flex:none;background:var(--accent);display:inline-block;
+    clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+    transition:transform .6s var(--ease)}
+  .brand:hover .brand-star{transform:rotate(72deg)}
 
   /* ---------- 인트로 ---------- */
   #introOverlay{
@@ -433,6 +437,70 @@
   .gate p{font-size:14.5px;color:var(--ink2);line-height:1.72;margin-top:10px;font-weight:600}
   .gate-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 
+  /* ══════ 캐릭터 · 파스텔 · 유기적 형태 ══════ */
+  .fig{display:block;overflow:visible}
+  .fig-wrap{display:grid;place-items:center;flex:none}
+
+  /* 경로 유형별 파스텔 카드 */
+  .card[data-tone="green"] {background:var(--green-soft)}
+  .card[data-tone="purple"]{background:var(--purple-soft)}
+  .card[data-tone="pink"]  {background:var(--pink-soft)}
+  .card[data-tone="orange"]{background:var(--orange-soft)}
+  .card[data-tone="blue"]  {background:var(--blue-soft)}
+  .card[data-tone="yellow"]{background:var(--yellow-soft)}
+
+  .card{position:relative;overflow:hidden}
+  .card .reason{background:rgba(255,253,247,.72);border-left:0;border-radius:20px;
+                backdrop-filter:blur(2px)}
+  .card .tag{background:rgba(255,253,247,.66)}
+
+  /* 카드 밖으로 살짝 나가는 blob 장식 */
+  .blob{position:absolute;pointer-events:none;opacity:.42;
+        border-radius:62% 38% 54% 46% / 52% 58% 42% 48%}
+  .blob-tr{width:132px;height:132px;right:-48px;top:-46px}
+  .blob-bl{width:112px;height:112px;left:-42px;bottom:-44px;opacity:.3;
+           border-radius:44% 56% 38% 62% / 60% 44% 56% 40%}
+
+  /* 히어로 2단 */
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
+             gap:clamp(22px,3.4vw,56px);align-items:center;width:100%}
+  .sky-wrap{position:relative;aspect-ratio:1/1;max-height:min(56vh,520px);width:100%;margin-inline:auto}
+  #skyCanvas{width:100%;height:100%;border-radius:50%;cursor:pointer}
+  .sky-hint{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);text-align:center;
+            font-size:13.5px;font-weight:700;color:var(--ink3);pointer-events:none;
+            transition:opacity .5s var(--ease);width:88%}
+  .sky-tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper2);
+           font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:999px;white-space:nowrap;
+           opacity:0;transform:translate(-50%,-140%);transition:opacity .22s ease}
+  .sky-tip.on{opacity:1}
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .sky-wrap{max-height:44vh;order:2}
+  }
+
+  /* 상세 헤더 캐릭터 */
+  .person-hero{display:flex;align-items:center;gap:clamp(18px,3vw,34px);flex-wrap:wrap}
+  .person-fig{width:clamp(92px,11vw,132px);height:clamp(92px,11vw,132px);flex:none}
+
+  /* 섹션 파스텔 배경 블록 */
+  .tint{border-radius:44px;padding:clamp(26px,3.2vw,44px);position:relative;overflow:hidden}
+  .tint-purple{background:var(--purple-soft)}
+  .tint-yellow{background:var(--yellow-soft)}
+  .tint-green{background:var(--green-soft)}
+  .tint-blue{background:var(--blue-soft)}
+
+  /* pill 인용 */
+  .quote{background:var(--yellow-soft)}
+
+  /* 감정처럼 반응하는 칩 */
+  .chip{background:var(--paper2);border-color:transparent;font-weight:700}
+  .chip:hover{transform:translateY(-3px) rotate(-1.4deg);border-color:transparent;
+              background:var(--purple-soft);color:var(--ink)}
+
+  .mood-note{display:inline-flex;align-items:center;gap:9px;background:var(--paper2);
+             border-radius:999px;padding:9px 16px 9px 10px;font-size:13px;font-weight:700;color:var(--ink2)}
+  .mood-note .fig-wrap{width:26px;height:26px}
+
   /* ---------- 접근성 ---------- */
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
@@ -457,7 +525,7 @@
 
 <script>
 /* ============================================================
-   선례(先例) — 단일 파일 데모
+   별의별 — 단일 파일 데모
    API 키는 아래 한 줄에만 둔다. 비어 있으면 자동으로 폴백이 돈다.
    ============================================================ */
 const API_KEY = "";
@@ -1377,7 +1445,7 @@ function searchbarHTML(value, compact){
   return '' +
     '<form class="searchbar' + (compact ? " compact" : "") + '" data-search>' +
       '<input name="q" type="search" autocomplete="off" value="' + esc(value || "") + '"' +
-        ' placeholder="부모님이 뭐라고 하시나요?" aria-label="부모님이 하신 말씀을 입력하세요" />' +
+        ' placeholder="부모님이 뭐라고 하셨어?" aria-label="부모님이 하신 말을 입력하세요" />' +
       "<button type=\"submit\">찾기</button>" +
     "</form>";
 }
@@ -1387,7 +1455,7 @@ function siteHeader(activeQuery){
   '<header class="border-b border-line bg-paper2/70 backdrop-blur sticky top-0 z-40">' +
     '<div class="wrap py-4">' +
       '<div class="site-head">' +
-        '<a href="#/" class="brand flex-none">선례<small>先例</small></a>' +
+        '<a href="#/" class="brand flex-none"><i class="brand-star"></i>별의별</a>' +
         '<div class="site-search">' + searchbarHTML(activeQuery, true) + "</div>" +
         authBarHTML() +
       "</div>" +
@@ -1480,7 +1548,7 @@ function chipsHTML(){
 const SECTIONS = [
   { id:"s1", name:"시작" },        { id:"s2", name:"부모님의 말" },
   { id:"s3", name:"진짜 이유" },   { id:"s4", name:"AI와 사람" },
-  { id:"s5", name:"작동 방식" },   { id:"s6", name:"선례 미리보기" },
+  { id:"s5", name:"작동 방식" },   { id:"s6", name:"별의별 미리보기" },
   { id:"s7", name:"후회 지표" },   { id:"s8", name:"어떤 길이든" },
   { id:"s9", name:"마무리" }
 ];
@@ -1491,23 +1559,31 @@ function sec1(){
   '<section id="s1" class="sec sec-hero">' +
     '<div class="hero-head">' +
       '<div class="wrap flex items-center justify-between gap-4">' +
-        '<a href="#/" class="brand">선례<small>先例</small></a>' + authBarHTML() +
+        '<a href="#/" class="brand"><i class="brand-star"></i>별의별</a>' + authBarHTML() +
       "</div>" +
     "</div>" +
     '<div class="hero-body">' +
-      '<div class="wrap w-full" id="heroStage">' +
-        '<p class="kicker reveal mb-6">먼저 간 사람들의 기록</p>' +
-        '<h1 class="reveal font-extrabold leading-[1.25] tracking-[-0.04em] max-w-[19ch]" style="font-size:clamp(29px,min(5.1vw,6.3vh),58px)">' +
-          "부모님은 그 길이 위험해서<br/>반대하는 게 아닙니다.<br/>" +
-          '<span class="text-accent">그 길로 간 사람을 본 적이 없어서</span> 반대합니다.' +
-        "</h1>" +
-        '<p class="reveal mt-7 text-ink2 font-semibold" style="font-size:clamp(17px,2.3vw,22px)">먼저 간 사람들이 여기 있습니다.</p>' +
-        '<div class="reveal mt-9 max-w-[720px]">' + searchbarHTML("", false) + "</div>" +
-        '<div class="reveal mt-5 flex flex-wrap gap-2.5 max-w-[820px]">' + chipsHTML() + "</div>" +
-        '<div class="reveal mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-[13.5px] text-ink3">' +
-          '<span><b class="text-ink font-bold">30명</b>의 이야기가 모여 있습니다</span>' +
-          '<span class="hidden sm:inline text-line2">|</span>' +
-          '<button id="replayIntro" class="underline underline-offset-4 decoration-line2 hover:text-ink transition-colors">인트로 다시 보기</button>' +
+      '<div class="wrap hero-grid" id="heroStage">' +
+        "<div>" +
+          '<p class="kicker reveal mb-6">별의별 길이 다 있어</p>' +
+          '<h1 class="reveal font-extrabold tracking-[-0.045em]" style="font-size:clamp(30px,min(5.4vw,6.6vh),62px);line-height:1.14">' +
+            "네가 가려는 그 길,<br/><span class=\"text-accent\">먼저 간 사람</span>이 있어." +
+          "</h1>" +
+          '<p class="reveal mt-6 text-ink2 font-semibold" style="font-size:clamp(15.5px,1.5vw,18.5px);line-height:1.7;max-width:30ch">' +
+            "부모님이 반대하시는 건 그 길이 위험해서가 아니야.<br/>그 길로 간 사람을 아직 못 보셔서 그래." +
+          "</p>" +
+          '<div class="reveal mt-8 max-w-[560px]">' + searchbarHTML("", false) + "</div>" +
+          '<div class="reveal mt-4 flex flex-wrap gap-2 max-w-[560px]">' + chipsHTML() + "</div>" +
+          '<div class="reveal mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-ink3">' +
+            '<span><b class="text-ink font-bold">서른 명</b>이 먼저 걸어갔어</span>' +
+            '<span class="hidden sm:inline text-line2">·</span>' +
+            '<button id="replayIntro" class="underline underline-offset-4 decoration-line2 hover:text-ink transition-colors">인트로 다시 보기</button>' +
+          "</div>" +
+        "</div>" +
+        '<div class="sky-wrap reveal">' +
+          '<canvas id="skyCanvas" aria-label="서른 명이 별처럼 떠 있는 영역. 누르면 그 사람 이야기로 갑니다"></canvas>' +
+          '<div class="sky-tip" id="skyTip"></div>' +
+          '<p class="sky-hint" id="skyHint">별 하나가 사람 한 명이야. 눌러봐.</p>' +
         "</div>" +
       "</div>" +
     "</div>" +
@@ -1532,7 +1608,7 @@ function sec3(){
           '<p class="sec-h">그 길로 간 사람을<br/>본 적이 없어서.</p>' +
         "</div>" +
       "</div>" +
-      '<p class="sec-note rise mt-16 pt-8 border-t border-line">없는 건 근거가 아니라 선례입니다.</p>' +
+      '<p class="sec-note rise mt-16 pt-8 border-t border-line">없는 건 근거가 아니라 별의별입니다.</p>' +
     "</div>" +
   "</section>";
 }
@@ -1647,7 +1723,7 @@ function sec9(){
   '<footer class="border-t border-line py-12">' +
     '<div class="wrap flex flex-wrap items-end justify-between gap-6">' +
       "<div>" +
-        '<div class="brand mb-2">선례<small>先例</small></div>' +
+        '<div class="brand mb-2"><i class="brand-star"></i>별의별</div>' +
         '<p class="text-[13.5px] text-ink3">부모님이 반대할 때, 그 길을 이미 걸어본 사람의 이야기를 찾아주는 곳.</p>' +
       "</div>" +
       '<p class="text-[12.5px] text-ink3">AI는 검색과 번역을 하고, 설득은 사람이 합니다.</p>' +
@@ -1678,23 +1754,24 @@ function sec2(){
   "</section>";
 }
 
-/* ── S6 선례 미리보기 ────────────────────────────────── */
+/* ── S6 별의별 미리보기 ────────────────────────────────── */
 function sec6(){
   const picks = ["p01", "p09", "p07"].map(id => BY_ID[id]);
   return '' +
   '<section id="s6" class="sec">' +
     '<div class="wrap w-full">' +
-      '<p class="sec-lead rise">06 — 선례 미리보기</p>' +
+      '<p class="sec-lead rise">06 — 별의별 미리보기</p>' +
       '<h2 class="sec-h rise mb-12">이런 사람들이 있습니다.</h2>' +
       '<div class="grid gap-5 md:grid-cols-3">' +
         picks.map(p =>
-          '<button class="card rise" data-person="' + p.id + '">' +
+          '<button class="card rise" data-tone="' + figOf(p).tone + '" data-person="' + p.id + '">' +
             '<div class="flex items-start justify-between gap-3">' +
-              "<div>" +
+              '<div class="flex items-center gap-3">' +
+                '<span class="fig-wrap" style="width:46px;height:46px">' + figSVG(p) + "</span><div>" +
                 '<div class="flex items-baseline gap-2"><span class="text-[19px] font-extrabold tracking-[-0.03em]">' + esc(p.name) + "</span>" +
                 '<span class="text-[13px] text-ink3 font-semibold serifnum">' + p.age + "세</span></div>" +
                 '<div class="mt-1 text-[14.5px] font-bold text-accent">' + esc(p.currentJob) + "</div>" +
-              "</div>" + badge(p.regret.level) +
+              "</div></div>" + badge(p.regret.level) +
             "</div>" +
             '<div class="mini-tl mt-5">' +
               p.routeSummary.split(" → ").map((step, i, arr) =>
@@ -1781,6 +1858,7 @@ function renderLanding(){
 
   document.documentElement.classList.add("snap");
   initLanding();
+  initSky();
 
   if (!introDone) runIntro();
   else { document.getElementById("introOverlay").hidden = true; playReveal(app, "#s1 .reveal", 90); }
@@ -2083,6 +2161,174 @@ function bindAuthBar(scope){
 }
 
 /* ============================================================
+   캐릭터 — 경로가 형태를, 후회 정도가 표정을 정한다
+   ============================================================ */
+const TONE = { "고졸취업":"green","대학자퇴":"purple","예체능":"pink","재수거부":"orange",
+               "문과":"blue","공무원준비":"yellow","유학":"blue","학과변경":"purple" };
+const SHAPE = { "고졸취업":"hexagon","대학자퇴":"blob","예체능":"flower","재수거부":"circle",
+                "문과":"capsule","공무원준비":"square","유학":"drop","학과변경":"star" };
+const SHAPE_D = {
+  circle:  "M50 6c24.3 0 44 19.7 44 44s-19.7 44-44 44S6 74.3 6 50 25.7 6 50 6z",
+  square:  "M50 5c18 0 27 0 33.5 6.5S90 32 90 50s0 27-6.5 33.5S68 90 50 90s-27 0-33.5-6.5S10 68 10 50s0-27 6.5-33.5S32 5 50 5z",
+  blob:    "M50 7c19 0 40 10 42 30s-9 34-20 44-30 15-42 6S8 60 9 43 31 7 50 7z",
+  hexagon: "M50 6l34 19.5a10 10 0 0 1 5 8.7v31.6a10 10 0 0 1-5 8.7L50 94l-34-19.5a10 10 0 0 1-5-8.7V34.2a10 10 0 0 1 5-8.7z",
+  drop:    "M50 6c14 16 34 30 34 48A34 34 0 0 1 16 54C16 36 36 22 50 6z",
+  capsule: "M31 10h38a25 25 0 0 1 0 50 25 25 0 0 1-6 35 27 27 0 0 1-38-38A25 25 0 0 1 31 10z",
+  star:    "M50 5l11 30 32 2-25 21 8 31-26-18-26 18 8-31-25-21 32-2z",
+  flower:  "M50 8a15 15 0 0 1 14 10 15 15 0 0 1 18 6 15 15 0 0 1 4 18 15 15 0 0 1 6 16 15 15 0 0 1-14 12 15 15 0 0 1-14 12 15 15 0 0 1-16-4 15 15 0 0 1-16 4 15 15 0 0 1-14-12 15 15 0 0 1-14-12 15 15 0 0 1 6-16 15 15 0 0 1 4-18 15 15 0 0 1 18-6A15 15 0 0 1 50 8z"
+};
+const FACE = {
+  "없음":      { eye:"happy", mouth:"smile" },
+  "일부 있음": { eye:"soft",  mouth:"flat"  },
+  "많이 있음": { eye:"sad",   mouth:"wave"  }
+};
+
+function figOf(p){
+  const g = groupOf(p) || "고졸취업";
+  return { shape:SHAPE[g], tone:TONE[g], face:FACE[p.regret.level] };
+}
+function figSVG(p, cls){
+  const f = figOf(p), ink = "var(--ink)";
+  let eyes;
+  if (f.face.eye === "happy")     eyes = '<path d="M33 46q4-5 8 0M59 46q4-5 8 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  else if (f.face.eye === "sad")  eyes = '<path d="M33 48q4 5 8 0M59 48q4 5 8 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  else                            eyes = '<circle cx="38" cy="47" r="4.6" fill="'+ink+'"/><circle cx="62" cy="47" r="4.6" fill="'+ink+'"/>';
+  let mouth;
+  if (f.face.mouth === "smile")     mouth = '<path d="M41 64q9 8 18 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  else if (f.face.mouth === "wave") mouth = '<path d="M39 65q5-5 10 0t10 0" stroke="'+ink+'" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+  else                              mouth = '<rect x="43" y="63" width="14" height="4" rx="2" fill="'+ink+'"/>';
+  return '<svg class="fig ' + (cls || "") + '" viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">' +
+    '<path d="' + SHAPE_D[f.shape] + '" fill="var(--' + f.tone + ')"/>' +
+    '<g data-eyes>' + eyes + "</g>" + mouth + "</svg>";
+}
+
+/* 눈이 커서를 조금 따라본다 */
+const eyePointer = { x:-9999, y:-9999, on:false };
+addEventListener("pointermove", e => { eyePointer.x = e.clientX; eyePointer.y = e.clientY; eyePointer.on = true; }, { passive:true });
+(function eyeLoop(){
+  if (!REDUCED && eyePointer.on){
+    document.querySelectorAll("[data-eyes]").forEach(g => {
+      const svg = g.ownerSVGElement; if (!svg) return;
+      const r = svg.getBoundingClientRect();
+      if (!r.width || r.bottom < 0 || r.top > innerHeight) return;
+      const dx = Math.max(-1, Math.min(1, (eyePointer.x - (r.left + r.width / 2)) / (r.width * 1.5))) * 3.4;
+      const dy = Math.max(-1, Math.min(1, (eyePointer.y - (r.top + r.height / 2)) / (r.height * 1.5))) * 2.8;
+      g.style.transform = "translate(" + dx + "px," + dy + "px)";
+      g.style.transition = "transform .5s var(--ease)";
+    });
+  }
+  setTimeout(() => requestAnimationFrame(eyeLoop), 70);
+})();
+
+/* ============================================================
+   Canvas — 별하늘. 30명이 하나씩 별이 되어 떠 있다.
+   커서가 가까이 가면 약하게 끌려오고, 누르면 그 사람 이야기로 간다.
+   ============================================================ */
+let skyStop = null;
+function initSky(){
+  const cv = document.getElementById("skyCanvas");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const tip = document.getElementById("skyTip");
+  let W = 0, H = 0, raf = 0, hover = null;
+  const pt = { x:-9999, y:-9999, on:false };
+
+  function resize(){
+    const r = cv.getBoundingClientRect();
+    if (!r.width) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    place();
+  }
+  const stars = PEOPLE.map(p => ({ p, x:0, y:0, vx:0, vy:0, r:0, rTo:0, a:Math.random() * 7, ph:Math.random() * 7 }));
+  function place(){
+    stars.forEach((s, i) => {
+      const ring = i % 3, idx = Math.floor(i / 3);
+      const ang = (idx / 10) * Math.PI * 2 + ring * .7;
+      const d = (0.20 + ring * 0.115) * Math.min(W, H);
+      s.hx = W / 2 + Math.cos(ang) * d;
+      s.hy = H / 2 + Math.sin(ang) * d;
+      if (!s.x) { s.x = s.hx; s.y = s.hy; }
+      s.rTo = Math.min(W, H) * (s.p.regret.level === "많이 있음" ? .036 : .03);
+    });
+  }
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(W / 2, H / 2, Math.min(W, H) / 2 - 1, 0, 7);
+    ctx.fillStyle = css("--paper3"); ctx.globalAlpha = .7; ctx.fill(); ctx.restore();
+
+    let near = null, nearD = 1e9;
+    for (const s of stars){
+      s.ph += .006;
+      const hx = s.hx + Math.sin(s.ph) * 7, hy = s.hy + Math.cos(s.ph * .8) * 7;
+      s.vx += (hx - s.x) * .006; s.vy += (hy - s.y) * .006;
+      if (pt.on){
+        const dx = pt.x - s.x, dy = pt.y - s.y, d2 = dx * dx + dy * dy;
+        if (d2 < 130 * 130 && d2 > 1){
+          const d = Math.sqrt(d2), f = (1 - d / 130) * .09;
+          s.vx += dx / d * f; s.vy += dy / d * f;
+          if (d < nearD && d < 42){ nearD = d; near = s; }
+        }
+      }
+      s.vx *= .93; s.vy *= .93;
+      s.x += s.vx; s.y += s.vy;
+      s.r += ((near === s ? s.rTo * 1.5 : s.rTo) - s.r) * .12;
+
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.scale(s.r / 50, s.r / 50);
+      ctx.translate(-50, -50);
+      ctx.globalAlpha = near && near !== s ? .5 : 1;
+      const f = figOf(s.p);
+      ctx.fillStyle = css("--" + f.tone);
+      ctx.fill(new Path2D(SHAPE_D[f.shape]));
+      if (near === s){
+        ctx.fillStyle = css("--ink");
+        ctx.beginPath(); ctx.arc(38, 47, 5, 0, 7); ctx.arc(62, 47, 5, 0, 7); ctx.fill();
+      }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    hover = near;
+    cv.style.cursor = near ? "pointer" : "default";
+    if (tip){
+      if (near){
+        const r = cv.getBoundingClientRect();
+        tip.style.left = near.x + "px"; tip.style.top = near.y + "px";
+        tip.textContent = near.p.name + " · " + near.p.currentJob;
+        tip.classList.add("on");
+      } else tip.classList.remove("on");
+    }
+    raf = requestAnimationFrame(draw);
+  }
+
+  function move(e){ const r = cv.getBoundingClientRect(); pt.x = e.clientX - r.left; pt.y = e.clientY - r.top; pt.on = true; }
+  function leave(){ pt.on = false; pt.x = pt.y = -9999; }
+  function click(){ if (hover) go("/person/" + hover.p.id); }
+  cv.addEventListener("pointermove", move, { passive:true });
+  cv.addEventListener("pointerleave", leave);
+  cv.addEventListener("click", click);
+  addEventListener("resize", resize);
+
+  resize();
+  if (REDUCED) { draw(); cancelAnimationFrame(raf); }
+  else raf = requestAnimationFrame(draw);
+
+  skyStop = () => {
+    cancelAnimationFrame(raf);
+    cv.removeEventListener("pointermove", move);
+    cv.removeEventListener("pointerleave", leave);
+    cv.removeEventListener("click", click);
+    removeEventListener("resize", resize);
+  };
+}
+
+/* ============================================================
    랜딩 섹션 인터랙션
    ============================================================ */
 let landingCleanup = null;
@@ -2273,7 +2519,7 @@ function drawRoutes(){
 /* ============================================================
    #/search?q=...  검색 결과
    ============================================================ */
-const LOADING_MSGS = ["30명의 이야기를 읽는 중", "비슷한 상황을 찾는 중", "이유를 정리하는 중"];
+const LOADING_MSGS = ["서른 명의 이야기를 읽는 중", "비슷한 상황을 찾는 중", "이유를 정리하는 중"];
 const cache = new Map();
 let renderToken = 0;   // 화면이 바뀐 뒤 늦게 도착한 응답을 버리기 위한 토큰
 
@@ -2289,14 +2535,18 @@ function skeletonHTML(){
 
 function personCardHTML(p, reason, idx){
   return '' +
-  '<button class="card card-enter" data-person="' + p.id + '" style="transition-delay:' + (idx * 110) + 'ms">' +
-    '<div class="flex items-start justify-between gap-4">' +
-      "<div>" +
-        '<div class="flex items-baseline gap-2.5 flex-wrap">' +
-          '<span class="text-[21px] font-extrabold tracking-[-0.03em]">' + esc(p.name) + "</span>" +
-          '<span class="text-[14px] text-ink3 font-semibold serifnum">' + p.age + "세</span>" +
+  '<button class="card card-enter" data-tone="' + figOf(p).tone + '" data-person="' + p.id + '" style="transition-delay:' + (idx * 110) + 'ms">' +
+    '<span class="blob blob-tr" style="background:var(--' + figOf(p).tone + ')"></span>' +
+    '<div class="flex items-start justify-between gap-4 relative">' +
+      '<div class="flex items-center gap-3.5">' +
+        '<span class="fig-wrap" style="width:54px;height:54px">' + figSVG(p) + "</span>" +
+        "<div>" +
+          '<div class="flex items-baseline gap-2 flex-wrap">' +
+            '<span class="text-[20px] font-extrabold tracking-[-0.03em]">' + esc(p.name) + "</span>" +
+            '<span class="text-[13.5px] text-ink3 font-semibold serifnum">' + p.age + "세</span>" +
+          "</div>" +
+          '<div class="mt-1 text-[15px] font-bold text-accent">' + esc(p.currentJob) + "</div>" +
         "</div>" +
-        '<div class="mt-1.5 text-[15.5px] font-bold text-accent">' + esc(p.currentJob) + "</div>" +
       "</div>" +
       badge(p.regret.level) +
     "</div>" +
@@ -2360,7 +2610,7 @@ function renderSearch(q){
   function paint(results){
     clearInterval(rotate);
     if (token !== renderToken) return;          // 이미 다른 화면으로 넘어갔다
-    meta.innerHTML = 'AI가 30명 중 <b class="text-ink font-bold">3명</b>을 골랐습니다.';
+    meta.innerHTML = '서른 명 중에 <b class="text-ink font-bold">세 명</b>을 골랐어.';
     holder.innerHTML = results.map((r, i) => {
       const p = BY_ID[r.id];
       return p ? personCardHTML(p, r.reason, i) : "";
@@ -2390,7 +2640,9 @@ function renderPerson(id){
     '<article class="wrap-narrow py-10 md:py-14">' +
       '<a href="#/" class="text-[13.5px] font-bold text-ink3 hover:text-ink transition-colors">← 다른 이야기 찾기</a>' +
 
-      '<header class="mt-6">' +
+      '<header class="mt-6 person-hero">' +
+        '<span class="person-fig fig-wrap">' + figSVG(p) + "</span>" +
+        "<div>" +
         '<div class="flex flex-wrap items-center gap-3">' +
           '<h1 class="font-extrabold tracking-[-0.04em]" style="font-size:clamp(32px,5.4vw,50px)">' + esc(p.name) + "</h1>" +
           badge(p.regret.level) +
@@ -2399,6 +2651,7 @@ function renderPerson(id){
         '<p class="mt-2 text-[15px] font-semibold text-ink2">' + esc(p.routeSummary) + "</p>" +
         '<div class="mt-4 flex flex-wrap gap-1.5">' +
           p.routeTags.map(t => '<span class="tag">' + esc(t) + "</span>").join("") +
+        "</div>" +
         "</div>" +
       "</header>" +
 
@@ -2636,6 +2889,7 @@ function route(){
   renderToken++;
   if (tlCleanup) { tlCleanup(); tlCleanup = null; }
   if (landingCleanup) { landingCleanup(); landingCleanup = null; }
+  if (skyStop) { skyStop(); skyStop = null; }
   document.documentElement.classList.remove("snap");   // 랜딩에서만 다시 켠다
   document.body.classList.remove("parent-view");
 
