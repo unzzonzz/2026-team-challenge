@@ -547,9 +547,18 @@
   .ex-field{position:relative;width:100%;max-width:1060px;margin:0 auto;
             aspect-ratio:16/11;min-height:520px}
   .ex-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;
-          pointer-events:none;width:min(46%,300px)}
-  .ex-mid b{display:block;font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-0.04em;line-height:1.2}
-  .ex-mid span{display:block;margin-top:10px;font-size:13.5px;font-weight:700;color:var(--ink3);line-height:1.6}
+          pointer-events:none;width:min(48%,320px);min-height:170px;display:grid;place-items:center}
+  .ex-mid > div{grid-area:1/1;transition:opacity .3s ease,transform .45s var(--ease)}
+  .ex-mid .idle b{display:block;font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-0.04em;line-height:1.2}
+  .ex-mid .idle span{display:block;margin-top:10px;font-size:13.5px;font-weight:700;color:var(--ink3);line-height:1.6}
+  .ex-mid .info{opacity:0;transform:scale(.94)}
+  .ex-field.peek .ex-mid .idle{opacity:0;transform:scale(.96)}
+  .ex-field.peek .ex-mid .info{opacity:1;transform:none}
+  .ex-mid .info .nm{font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-0.04em;line-height:1.2}
+  .ex-mid .info .jb{margin-top:6px;font-size:14.5px;font-weight:800;color:var(--accent)}
+  .ex-mid .info .rt{margin-top:10px;font-size:12.5px;font-weight:600;color:var(--ink3);line-height:1.6}
+  .ex-mid .info .bg{margin-top:12px}
+  .ex-mid .info .go{margin-top:12px;font-size:12px;font-weight:700;color:var(--ink3)}
 
   .ex-group{position:absolute;transform:translate(-50%,-50%);pointer-events:none;
             font-size:11.5px;font-weight:800;letter-spacing:.04em;color:var(--ink3);
@@ -581,11 +590,17 @@
   .orb-card .r{font-size:11.5px;font-weight:600;color:var(--ink3);margin-top:7px;line-height:1.5}
   .orb-card .b{margin-top:9px}
   .orb.low .orb-card{top:auto;bottom:calc(100% + 10px)}
+  @media (min-width:901px){ .orb-card{display:none} }
 
-  .ex-filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px auto 8px;max-width:840px}
-  .ex-f{padding:9px 15px;border-radius:999px;font-size:13px;font-weight:700;background:var(--paper2);
+  .ex-filters{display:flex;flex-wrap:nowrap;gap:7px;justify-content:center;margin:26px auto 10px;
+              max-width:100%;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+  .ex-filters::-webkit-scrollbar{display:none}
+  .ex-f{flex:none;padding:9px 14px;border-radius:999px;font-size:12.5px;font-weight:700;
+        background:var(--paper2);white-space:nowrap;
         color:var(--ink2);box-shadow:0 3px 12px rgba(40,30,20,.04);
         transition:transform .35s var(--ease),background .25s,color .25s}
+  .ex-f b{font-weight:800;opacity:.5;margin-left:4px}
+  .ex-f[aria-pressed="true"] b{opacity:.75}
   .ex-f:hover{transform:translateY(-2px)}
   .ex-f[aria-pressed="true"]{background:var(--accent);color:var(--paper2)}
 
@@ -2841,15 +2856,18 @@ function renderExplore(){
       "</div>" +
 
       '<div class="ex-filters" id="exFilters">' +
-        '<button class="ex-f" data-f="all" aria-pressed="true">전체 30명</button>' +
+        '<button class="ex-f" data-f="all" aria-pressed="true">전체<b>30</b></button>' +
         ROUTE_GROUPS.map(g =>
           '<button class="ex-f" data-f="' + esc(g.tag) + '" aria-pressed="false">' +
-            esc(g.label) + " " + routeCount(g.tag) + "</button>"
+            esc(g.label) + "<b>" + routeCount(g.tag) + "</b></button>"
         ).join("") +
       "</div>" +
 
       '<div class="ex-field" id="exField">' +
-        '<div class="ex-mid"><b>별의별</b><span>길이 다 있어.<br/>정답은 아직 아무도 몰라.</span></div>' +
+        '<div class="ex-mid">' +
+          '<div class="idle"><b>별의별</b><span>길이 다 있어.<br/>정답은 아직 아무도 몰라.</span></div>' +
+          '<div class="info" id="exInfo" aria-live="polite"></div>' +
+        "</div>" +
         nodes.map(n => {
           if (n.group)
             return '<span class="ex-group" data-tag="' + esc(n.tag) + '" ' +
@@ -2874,6 +2892,28 @@ function renderExplore(){
 
   bindSearchForms(app);
 
+  const field = document.getElementById("exField");
+  const info  = document.getElementById("exInfo");
+  function peek(id){
+    if (!id){ field.classList.remove("peek"); return; }
+    const p = BY_ID[id];
+    info.innerHTML =
+      '<div class="nm">' + esc(p.name) + ' <span style="font-size:.6em;color:var(--ink3)">' + p.age + '세</span></div>' +
+      '<div class="jb">' + esc(p.currentJob) + "</div>" +
+      '<div class="rt">' + esc(p.routeSummary) + "</div>" +
+      '<div class="bg">' + badge(p.regret.level) + "</div>" +
+      '<div class="go">눌러서 이야기 보기 →</div>';
+    field.classList.add("peek");
+  }
+  /* 위임은 focus 이동 순서에 따라 갱신을 놓칠 수 있어 각 요소에 직접 건다 (30개뿐) */
+  field.querySelectorAll("[data-person]").forEach(o => {
+    const id = o.getAttribute("data-person");
+    o.addEventListener("pointerenter", () => peek(id));
+    o.addEventListener("focus", () => peek(id));
+    o.addEventListener("pointerleave", () => peek(null));
+    o.addEventListener("blur", () => peek(null));
+  });
+
   app.addEventListener("click", e => {
     const orb = e.target.closest("[data-person]");
     if (orb) { go("/person/" + orb.getAttribute("data-person")); return; }
@@ -2881,7 +2921,6 @@ function renderExplore(){
     if (!f) return;
     const tag = f.getAttribute("data-f");
     app.querySelectorAll("[data-f]").forEach(b => b.setAttribute("aria-pressed", String(b === f)));
-    const field = document.getElementById("exField");
     if (tag === "all") { field.removeAttribute("data-focus"); }
     else field.setAttribute("data-focus", tag);
     field.querySelectorAll(".orb, .ex-group").forEach(el =>
