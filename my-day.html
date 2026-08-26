@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>하루 — 오늘의 나</title>
+<meta name="description" content="공부하라고 재촉하지 않는, 내 하루를 가볍게 돌보는 작은 공간." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+<style>
+/* ══════════════════════════════════════════════════════════
+   STEP 1 — DESIGN SYSTEM
+   ══════════════════════════════════════════════════════════ */
+:root{
+  /* surface — 전체의 60% */
+  --bg:#F8F3E8;
+  --surface:#FFFDF7;
+  --surface-soft:#F1EBDD;
+  --surface-warm:#F5EEE0;
+
+  /* ink — 전체의 5%. 앵커 역할만 한다 */
+  --ink:#171717;
+  --ink-soft:#383838;
+  --muted:#6E6A62;
+  --hairline:#E7DFCD;
+
+  /* pastel accents — 전체의 15% */
+  --pink:#F3A7D0;        --pink-soft:#F7C4DD;
+  --yellow:#F6D96A;      --yellow-soft:#F9E8A1;
+  --purple:#A986D4;      --purple-soft:#C8B3E6;
+  --blue:#9DBDE8;        --blue-soft:#C5D8F2;
+  --green:#9DB66A;       --green-soft:#C5D49B;
+  --orange:#F5A13B;      --orange-soft:#F8C77D;
+
+  /* motion */
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.33,.9,.28,1);
+
+  /* elevation — 색과 형태로 위계를 만들고 그림자는 거들기만 한다 */
+  --lift:0 8px 25px rgba(40,30,20,.06);
+  --lift-sm:0 4px 14px rgba(40,30,20,.05);
+
+  --gap:22px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  letter-spacing:-0.019em;
+  word-break:keep-all;
+  overflow-x:hidden;
+}
+::selection{background:var(--purple-soft);color:var(--ink)}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;letter-spacing:inherit;padding:0}
+a{color:inherit;text-decoration:none}
+canvas{display:block}
+:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:14px}
+
+/* ── typography scale ─────────────────────────────────── */
+.t-hero{font-size:clamp(42px,5.6vw,80px);font-weight:800;line-height:1.06;letter-spacing:-0.045em}
+.t-sec{font-size:clamp(21px,2.1vw,29px);font-weight:800;letter-spacing:-0.035em;line-height:1.3}
+.t-num{font-size:clamp(40px,4.4vw,62px);font-weight:800;letter-spacing:-0.05em;line-height:1;font-variant-numeric:tabular-nums}
+.t-body{font-size:16.5px;line-height:1.62;font-weight:500}
+.t-sub{font-size:13.5px;line-height:1.55;font-weight:600;color:var(--muted)}
+.t-label{font-size:12.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+/* ── shell ────────────────────────────────────────────── */
+.shell{max-width:1420px;margin:0 auto;padding:0 clamp(20px,3.4vw,52px)}
+
+/* ── shapes — 같은 radius를 반복하지 않는다 ───────────── */
+.blob-a{border-radius:62% 38% 54% 46% / 52% 58% 42% 48%}
+.blob-b{border-radius:44% 56% 38% 62% / 60% 44% 56% 40%}
+.blob-c{border-radius:50% 50% 46% 54% / 56% 48% 52% 44%}
+
+/* ══════════════════════════════════════════════════════════
+   NAVIGATION — 화면을 차지하지 않게
+   ══════════════════════════════════════════════════════════ */
+.nav{position:sticky;top:0;z-index:40;padding:18px 0 14px;
+     background:linear-gradient(180deg,var(--bg) 62%,rgba(248,243,232,0))}
+.nav-in{display:flex;align-items:center;gap:34px}
+.logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:800;letter-spacing:-0.04em;flex:none}
+.logo-mark{width:30px;height:30px;background:var(--purple);position:relative;flex:none}
+.logo-mark::before,.logo-mark::after{content:'';position:absolute;width:4px;height:4px;border-radius:50%;background:var(--surface);top:12px}
+.logo-mark::before{left:8px}.logo-mark::after{right:8px}
+
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{padding:9px 17px;border-radius:999px;font-size:14.5px;font-weight:700;color:var(--muted);
+          transition:color .3s var(--ease),background .3s var(--ease)}
+.nav-link:hover{color:var(--ink-soft);background:var(--surface-soft)}
+.nav-link[aria-current="page"]{color:var(--ink);background:var(--yellow-soft)}
+.nav-right{display:flex;align-items:center;gap:12px;flex:none}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--surface);
+          border:1px solid var(--hairline);transition:transform .35s var(--ease),background .3s}
+.icon-btn:hover{transform:translateY(-2px) rotate(-7deg);background:var(--yellow-soft)}
+.icon-btn .dot{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--orange);
+               transform:translate(9px,-9px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--pink);display:grid;place-items:center;
+        font-size:13.5px;font-weight:800;color:var(--ink);cursor:pointer;
+        transition:transform .4s var(--ease)}
+.avatar:hover{transform:translateY(-2px) scale(1.04)}
+
+/* ══════════════════════════════════════════════════════════
+   HERO — 좌: 말 걸기 + 감정 고르기 / 우: Mood Universe
+   ══════════════════════════════════════════════════════════ */
+.hero{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
+      gap:clamp(24px,3.5vw,58px);align-items:center;padding:clamp(18px,3vh,44px) 0 clamp(30px,5vh,64px)}
+.hero-say{max-width:15ch}
+.hero-sub{margin-top:20px;max-width:34ch;font-size:clamp(15.5px,1.25vw,18px);line-height:1.66;
+          font-weight:600;color:var(--muted)}
+
+/* 감정 고르기 — 4 × 3 */
+.moods{margin-top:32px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:430px}
+.mood{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 6px 12px;border-radius:22px;
+      transition:background .35s var(--ease),transform .5s var(--ease)}
+.mood:hover{background:var(--surface)}
+.mood:hover .mood-face{transform:translateY(-5px)}
+.mood[aria-pressed="true"]{background:var(--surface);box-shadow:var(--lift-sm)}
+.mood[aria-pressed="true"] .mood-face{transform:translateY(-3px) scale(1.06)}
+.mood-face{width:46px;height:46px;transition:transform .55s var(--ease);will-change:transform}
+.mood-name{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:-0.01em;
+           transition:color .3s}
+.mood[aria-pressed="true"] .mood-name,.mood:hover .mood-name{color:var(--ink)}
+
+.hero-canvas-wrap{position:relative;aspect-ratio:1/1;max-height:min(60vh,560px);margin-inline:auto;width:100%}
+#moodCanvas{width:100%;height:100%;border-radius:50%;cursor:grab}
+#moodCanvas:active{cursor:grabbing}
+.universe-msg{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);text-align:center;
+              width:min(84%,340px);pointer-events:none}
+.universe-msg p{margin:0;font-size:15.5px;font-weight:700;line-height:1.55;color:var(--ink-soft);
+                opacity:0;transform:translateY(8px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
+.universe-msg p.on{opacity:1;transform:none}
+.universe-hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;
+               font-size:14.5px;font-weight:700;color:var(--muted);transition:opacity .5s var(--ease)}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD — 비대칭 구성
+   ══════════════════════════════════════════════════════════ */
+.board{display:grid;gap:var(--gap);padding-bottom:clamp(40px,7vh,90px);
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  /* 각 영역은 반드시 직사각형이어야 한다. 아니면 areas 전체가 무시된다. */
+  grid-template-areas:
+    "mood mood mood focus focus focus orb orb orb wins wins wins"
+    "garden garden garden garden garden garden garden acts acts wins wins wins";
+}
+.card{background:var(--surface);padding:26px 26px 24px;position:relative;overflow:hidden;
+      box-shadow:var(--lift);transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.card:hover{transform:translateY(-3px)}
+
+/* 카드마다 형태를 다르게 준다 */
+.c-mood  {grid-area:mood;   border-radius:38px 38px 38px 104px;background:var(--pink-soft)}
+.c-focus {grid-area:focus;  border-radius:104px 38px 38px 38px}
+.c-orb   {grid-area:orb;    border-radius:38px 104px 38px 38px;background:var(--surface-warm)}
+.c-wins  {grid-area:wins;   border-radius:44px;display:flex;flex-direction:column}
+.c-garden{grid-area:garden; border-radius:38px 38px 104px 38px;background:var(--green-soft);padding-bottom:0}
+.c-acts  {grid-area:acts;   border-radius:38px 38px 38px 104px;background:var(--blue-soft)}
+
+/* 카드 밖으로 살짝 나가는 장식 */
+.deco{position:absolute;pointer-events:none;opacity:.5}
+.deco-1{width:130px;height:130px;background:var(--pink);right:-46px;top:-42px}
+.deco-2{width:104px;height:104px;background:var(--yellow-soft);right:-34px;bottom:-38px}
+.deco-3{width:120px;height:120px;background:var(--blue);left:-44px;bottom:-46px;opacity:.32}
+
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;
+      background:var(--surface);font-size:12.5px;font-weight:800;color:var(--ink-soft)}
+.card-note{font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.6;margin:10px 0 0}
+
+/* today's mood */
+.mood-now{display:flex;align-items:center;gap:16px;margin-top:6px}
+.mood-now-face{width:74px;height:74px;flex:none}
+.mood-now-label{font-size:26px;font-weight:800;letter-spacing:-0.04em;line-height:1.2}
+
+/* focus */
+.bars{display:flex;align-items:flex-end;gap:8px;height:76px;margin-top:20px}
+.bar{flex:1;background:var(--surface-soft);border-radius:999px;position:relative;overflow:hidden;
+     transition:background .3s}
+.bar span{position:absolute;left:0;right:0;bottom:0;background:var(--purple);border-radius:999px;
+          height:0;transition:height 1.1s var(--ease)}
+.bar.today span{background:var(--orange)}
+.bar-days{display:flex;gap:8px;margin-top:9px}
+.bar-days b{flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--muted)}
+.bar-days b.today{color:var(--ink)}
+
+/* progress orb */
+.orb-wrap{position:relative;aspect-ratio:1/1;margin:2px auto 0;width:min(100%,210px)}
+#orbCanvas{width:100%;height:100%}
+.orb-pct{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.orb-pct b{font-size:34px;font-weight:800;letter-spacing:-0.05em;font-variant-numeric:tabular-nums}
+
+/* small wins */
+.wins-list{margin:4px 0 0;padding:0;list-style:none;flex:1}
+.win{display:flex;align-items:flex-start;gap:13px;padding:13px 0;border-bottom:1px solid var(--hairline);
+     width:100%;text-align:left;transition:opacity .4s}
+.win:last-child{border-bottom:0}
+.win-box{width:26px;height:26px;border-radius:9px;border:2px solid var(--hairline);flex:none;margin-top:1px;
+         display:grid;place-items:center;transition:background .4s var(--ease),border-color .4s var(--ease),transform .5s var(--ease)}
+.win-box svg{opacity:0;transform:scale(.4);transition:opacity .3s,transform .45s var(--ease)}
+.win[aria-pressed="true"] .win-box{background:var(--green);border-color:var(--green);transform:rotate(-6deg)}
+.win[aria-pressed="true"] .win-box svg{opacity:1;transform:none}
+.win-text{font-size:15px;font-weight:600;line-height:1.5;transition:color .4s}
+.win[aria-pressed="true"] .win-text{color:var(--muted)}
+.win:hover .win-box{border-color:var(--green)}
+.win-add{margin-top:14px;padding:12px;border-radius:16px;border:2px dashed var(--hairline);width:100%;
+         font-size:13.5px;font-weight:700;color:var(--muted);transition:border-color .3s,color .3s}
+.win-add:hover{border-color:var(--green);color:var(--ink-soft)}
+
+/* garden */
+.garden-wrap{position:relative;margin:14px -26px 0;height:190px}
+#gardenCanvas{width:100%;height:100%}
+
+/* quick activities */
+.acts{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.act{padding:11px 16px;border-radius:999px;background:var(--surface);font-size:13.5px;font-weight:700;
+     display:inline-flex;align-items:center;gap:8px;
+     transition:transform .45s var(--ease),background .3s}
+.act:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.act i{width:9px;height:9px;border-radius:3px;display:block;flex:none}
+
+/* 진입 애니메이션 */
+.enter{opacity:0;transform:translateY(20px)}
+.enter.in{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .8s var(--ease)}
+
+@media (max-width:1180px){
+  .board{grid-template-areas:
+    "mood mood mood mood focus focus focus focus orb orb orb orb"
+    "wins wins wins wins wins wins acts acts acts acts acts acts"
+    "garden garden garden garden garden garden garden garden garden garden garden garden";}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:26px}
+  .hero-canvas-wrap{max-height:52vh;order:2}
+  .moods{max-width:none}
+  .nav-links{display:none}
+  .board{grid-template-areas:"mood mood mood mood mood mood focus focus focus focus focus focus"
+                             "orb orb orb orb orb orb orb orb orb orb orb orb"
+                             "wins wins wins wins wins wins wins wins wins wins wins wins"
+                             "garden garden garden garden garden garden garden garden garden garden garden garden"
+                             "acts acts acts acts acts acts acts acts acts acts acts acts";}
+}
+@media (max-width:560px){
+  .board{grid-template-columns:1fr;grid-template-areas:"mood" "focus" "orb" "wins" "garden" "acts"}
+  .moods{grid-template-columns:repeat(4,1fr);gap:8px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  .enter{opacity:1 !important;transform:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="shell nav-in">
+    <a href="#" class="logo enter"><span class="logo-mark blob-a" id="logoMark"></span>하루</a>
+    <nav class="nav-links enter" aria-label="주요 메뉴">
+      <a class="nav-link" href="#" aria-current="page">오늘</a>
+      <a class="nav-link" href="#board">내 하루</a>
+      <a class="nav-link" href="#board">기록</a>
+      <a class="nav-link" href="#board">활동</a>
+    </nav>
+    <div class="nav-right enter">
+      <button class="icon-btn" aria-label="알림 3개">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+        </svg>
+        <span class="dot"></span>
+      </button>
+      <div class="avatar" id="avatar" role="img" aria-label="승찬님 프로필">승찬</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ══ HERO ══════════════════════════════════════════ -->
+  <section class="shell hero">
+    <div>
+      <p class="t-label enter" id="dayLabel">오늘</p>
+      <h1 class="t-hero hero-say enter" style="margin:14px 0 0">
+        승찬아,<br/>오늘 기분<br/>어때?
+      </h1>
+      <p class="hero-sub enter">고르면 여기 작은 세계가 하나 생겨. 정답은 없으니까 지금 마음에 제일 가까운 걸로.</p>
+
+      <div class="moods enter" id="moodGrid" role="group" aria-label="오늘의 기분 고르기"></div>
+    </div>
+
+    <div class="hero-canvas-wrap enter">
+      <canvas id="moodCanvas" aria-label="고른 기분이 작은 세계로 나타나는 영역"></canvas>
+      <div class="universe-hint" id="universeHint">기분을 하나 골라봐</div>
+      <div class="universe-msg"><p id="universeMsg"></p></div>
+    </div>
+  </section>
+
+  <!-- ══ DASHBOARD ═════════════════════════════════════ -->
+  <section class="shell board" id="board">
+
+    <!-- Today's mood -->
+    <article class="card c-mood enter">
+      <span class="deco deco-1 blob-b"></span>
+      <div class="card-head"><p class="t-label">Today's mood</p></div>
+      <div class="mood-now">
+        <div class="mood-now-face" id="moodNowFace"></div>
+        <div>
+          <div class="mood-now-label" id="moodNowLabel">아직</div>
+          <p class="card-note" id="moodNowNote">왼쪽에서 하나 골라줘.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Focus -->
+    <article class="card c-focus enter">
+      <div class="card-head">
+        <p class="t-label">이번 주 집중</p>
+        <span class="chip" id="focusTrend">어제보다 +25분</span>
+      </div>
+      <div class="t-num"><span id="focusNum">0</span><span style="font-size:.42em;font-weight:800;margin-left:4px">분</span></div>
+      <div class="bars" id="focusBars"></div>
+      <div class="bar-days" id="focusDays"></div>
+    </article>
+
+    <!-- Progress orb -->
+    <article class="card c-orb enter">
+      <div class="card-head"><p class="t-label">이번 주 목표</p></div>
+      <div class="orb-wrap">
+        <canvas id="orbCanvas" aria-hidden="true"></canvas>
+        <div class="orb-pct"><b id="orbPct">0%</b></div>
+      </div>
+      <p class="card-note" style="text-align:center" id="orbNote">7개 중 5개 했어. 거의 다 왔다.</p>
+    </article>
+
+    <!-- Small wins -->
+    <article class="card c-wins enter">
+      <span class="deco deco-2 blob-c"></span>
+      <div class="card-head">
+        <p class="t-label">Small wins</p>
+        <span class="chip" id="winCount">0 / 4</span>
+      </div>
+      <p class="card-note" style="margin:0 0 6px">오늘 잘한 작은 일. 체크하면 아래 정원에 하나 심어져.</p>
+      <ul class="wins-list" id="winsList"></ul>
+      <button class="win-add" id="winAdd">+ 오늘 잘한 일 더하기</button>
+    </article>
+
+    <!-- Energy garden -->
+    <article class="card c-garden enter">
+      <div class="card-head">
+        <p class="t-label">오늘의 정원</p>
+        <span class="chip" id="gardenChip">잔잔한 하루</span>
+      </div>
+      <p class="card-note" style="max-width:44ch">오늘 어떻게 보냈는지가 여기 자라. 집중한 만큼 꽃이 피고, 쉰 만큼 잎이 늘어나.</p>
+      <div class="garden-wrap"><canvas id="gardenCanvas" aria-hidden="true"></canvas></div>
+    </article>
+
+    <!-- Quick activities -->
+    <article class="card c-acts enter">
+      <span class="deco deco-3 blob-a"></span>
+      <div class="card-head"><p class="t-label">잠깐 할 수 있는 것</p></div>
+      <p class="card-note" style="margin:0">5분이면 충분한 것들.</p>
+      <div class="acts" id="actsWrap"></div>
+    </article>
+
+  </section>
+</main>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   데이터
+   ══════════════════════════════════════════════════════════ */
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* 감정 12개 — 형태가 그 감정의 성격을 나타낸다.
+   부정적인 감정도 똑같은 크기·똑같은 언어로 표현한다. */
+const MOODS = [
+  { id:"excited",   ko:"신나",     shape:"circle",  color:"--pink",   eye:"wide",  mouth:"open",
+    msg:"오늘 좀 신나는구나.<br/>그 기운, 하고 싶었던 거에 먼저 써봐." },
+  { id:"joyful",    ko:"기뻐",     shape:"flower",  color:"--pink",   eye:"happy", mouth:"smile",
+    msg:"좋은 날이네.<br/>이런 날은 기억해두면 나중에 힘이 돼." },
+  { id:"grateful",  ko:"고마워",   shape:"blob",    color:"--purple", eye:"soft",  mouth:"smile",
+    msg:"고마운 마음이 드는 날.<br/>누구한테 고마운지 한 줄만 적어볼래?" },
+  { id:"energized", ko:"힘나",     shape:"hexagon", color:"--purple", eye:"wide",  mouth:"smile",
+    msg:"에너지가 있는 날이야.<br/>제일 미뤄둔 걸 지금 시작하면 딱 좋아." },
+
+  { id:"sensitive", ko:"예민해",   shape:"drop",    color:"--blue",   eye:"soft",  mouth:"flat",
+    msg:"예민한 날도 있지.<br/>오늘은 조금 천천히 가도 괜찮아." },
+  { id:"confused",  ko:"헷갈려",   shape:"capsule", color:"--blue",   eye:"tilt",  mouth:"wave",
+    msg:"정리가 안 되는 날이구나.<br/>한 번에 하나씩만 생각해보자." },
+  { id:"bored",     ko:"심심해",   shape:"square",  color:"--green",  eye:"flat",  mouth:"flat",
+    msg:"심심한 것도 하나의 상태야.<br/>아래에서 5분짜리 하나 골라볼래?" },
+  { id:"stressed",  ko:"부담돼",   shape:"triangle",color:"--green",  eye:"small", mouth:"wave",
+    msg:"부담이 큰 날이네.<br/>다 하려고 하지 말고 제일 작은 것 하나만." },
+
+  { id:"angry",     ko:"화나",     shape:"spiky",   color:"--orange", eye:"angry", mouth:"flat",
+    msg:"화가 나는 건 이상한 게 아니야.<br/>잠깐 밖에 나갔다 오는 것도 방법이야." },
+  { id:"insecure",  ko:"불안해",   shape:"circle",  color:"--orange", eye:"small", mouth:"wave",
+    msg:"불안할 땐 멀리 보지 말고<br/>오늘 하루만 생각하자." },
+  { id:"hurt",      ko:"속상해",   shape:"drop",    color:"--yellow", eye:"sad",   mouth:"flat",
+    msg:"속상했구나.<br/>그 마음 그냥 그대로 둬도 괜찮아." },
+  { id:"guilty",    ko:"미안해",   shape:"square",  color:"--yellow", eye:"sad",   mouth:"flat",
+    msg:"미안한 마음이 남아 있구나.<br/>그건 네가 신경 쓰고 있다는 뜻이야." }
+];
+const MOOD_BY = Object.fromEntries(MOODS.map(m => [m.id, m]));
+
+const WINS = [
+  { text:"수학 숙제 끝냄",        done:true  },
+  { text:"20분 책 읽기",          done:false },
+  { text:"제대로 쉬는 시간 가짐", done:true  },
+  { text:"물 여덟 잔 마시기",     done:false }
+];
+
+const ACTS = [
+  { text:"3분 스트레칭",   c:"--pink"   },
+  { text:"창밖 보기",       c:"--blue"   },
+  { text:"물 한 잔",        c:"--green"  },
+  { text:"오답 3개만",      c:"--purple" },
+  { text:"단어 10개",       c:"--orange" },
+  { text:"내일 할 일 적기", c:"--yellow" }
+];
+
+const FOCUS = [42, 65, 30, 78, 55, 92, 70];   // 분
+const DAYS  = ["월","화","수","목","금","토","일"];
+const TODAY_IDX = 5;
+
+/* ══════════════════════════════════════════════════════════
+   감정 캐릭터 — emoji를 쓰지 않고 단순 도형으로 직접 그린다.
+   형태 + 눈 + 입만으로 감정을 만든다.
+   ══════════════════════════════════════════════════════════ */
+const SHAPE_PATH = {
+  circle:  "M50 6c24.3 0 44 19.7 44 44s-19.7 44-44 44S6 74.3 6 50 25.7 6 50 6z",
+  square:  "M50 5h0c18 0 27 0 33.5 6.5S90 32 90 50s0 27-6.5 33.5S68 90 50 90s-27 0-33.5-6.5S10 68 10 50s0-27 6.5-33.5S32 5 50 5z",
+  blob:    "M50 7c19 0 40 10 42 30s-9 34-20 44-30 15-42 6S8 60 9 43 31 7 50 7z",
+  hexagon: "M50 6l34 19.5a10 10 0 0 1 5 8.7v31.6a10 10 0 0 1-5 8.7L50 94l-34-19.5a10 10 0 0 1-5-8.7V34.2a10 10 0 0 1 5-8.7z",
+  drop:    "M50 6c14 16 34 30 34 48A34 34 0 0 1 16 54C16 36 36 22 50 6z",
+  capsule: "M31 10h38a25 25 0 0 1 0 50 25 25 0 0 1-6 35 27 27 0 0 1-38-38A25 25 0 0 1 31 10z",
+  triangle:"M50 9c4 0 7 2 9 6l31 55c4 8-1 17-10 17H20c-9 0-14-9-10-17l31-55c2-4 5-6 9-6z",
+  spiky:   "M50 5l9 13 15-6-2 16 16 3-10 13 10 13-16 3 2 16-15-6-9 13-9-13-15 6 2-16-16-3 10-13-10-13 16-3-2-16 15 6z",
+  flower:  "M50 8a15 15 0 0 1 14 10 15 15 0 0 1 18 6 15 15 0 0 1 4 18 15 15 0 0 1 6 16 15 15 0 0 1-14 12 15 15 0 0 1-14 12 15 15 0 0 1-16-4 15 15 0 0 1-16 4 15 15 0 0 1-14-12 15 15 0 0 1-14-12 15 15 0 0 1 6-16 15 15 0 0 1 4-18 15 15 0 0 1 18-6A15 15 0 0 1 50 8z"
+};
+
+/* 눈은 별도 그룹으로 둬서 커서를 따라 움직일 수 있게 한다 */
+function eyesSVG(kind){
+  const ink = "var(--ink)";
+  if (kind === "happy") return '<path d="M33 46q4-5 8 0M59 46q4-5 8 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  if (kind === "sad")   return '<path d="M33 48q4 5 8 0M59 48q4 5 8 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  if (kind === "angry") return '<path d="M31 41l11 5M69 41l-11 5" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>' +
+                               '<circle cx="38" cy="52" r="4" fill="'+ink+'"/><circle cx="62" cy="52" r="4" fill="'+ink+'"/>';
+  if (kind === "flat")  return '<rect x="33" y="46" width="10" height="4" rx="2" fill="'+ink+'"/><rect x="57" y="46" width="10" height="4" rx="2" fill="'+ink+'"/>';
+  if (kind === "tilt")  return '<circle cx="37" cy="45" r="4.4" fill="'+ink+'"/><circle cx="63" cy="51" r="4.4" fill="'+ink+'"/>';
+  if (kind === "small") return '<circle cx="39" cy="48" r="3.2" fill="'+ink+'"/><circle cx="61" cy="48" r="3.2" fill="'+ink+'"/>';
+  if (kind === "wide")  return '<circle cx="37" cy="47" r="6" fill="'+ink+'"/><circle cx="63" cy="47" r="6" fill="'+ink+'"/>';
+  return '<circle cx="38" cy="47" r="4.8" fill="'+ink+'"/><circle cx="62" cy="47" r="4.8" fill="'+ink+'"/>';  // soft
+}
+function mouthSVG(kind){
+  const ink = "var(--ink)";
+  if (kind === "smile") return '<path d="M41 64q9 8 18 0" stroke="'+ink+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  if (kind === "open")  return '<path d="M41 62q9 12 18 0z" fill="'+ink+'"/>';
+  if (kind === "wave")  return '<path d="M39 65q5-5 10 0t10 0" stroke="'+ink+'" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+  return '<rect x="43" y="63" width="14" height="4" rx="2" fill="'+ink+'"/>';   // flat
+}
+function faceSVG(m, opts){
+  const o = opts || {};
+  return '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true" ' +
+           (o.cls ? 'class="' + o.cls + '"' : "") + ' style="overflow:visible">' +
+      '<path d="' + SHAPE_PATH[m.shape] + '" fill="var(' + m.color + ')"/>' +
+      '<g data-eyes>' + eyesSVG(m.eye) + "</g>" +
+      mouthSVG(m.mouth) +
+    "</svg>";
+}
+
+/* ══════════════════════════════════════════════════════════
+   STEP 2 — 정적 UI 채우기
+   ══════════════════════════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const moodGrid = $("#moodGrid");
+
+moodGrid.innerHTML = MOODS.map(m =>
+  '<button class="mood" data-mood="' + m.id + '" aria-pressed="false">' +
+    '<span class="mood-face">' + faceSVG(m) + "</span>" +
+    '<span class="mood-name">' + m.ko + "</span>" +
+  "</button>"
+).join("");
+
+$("#focusBars").innerHTML = FOCUS.map((v, i) =>
+  '<div class="bar' + (i === TODAY_IDX ? " today" : "") + '"><span data-h="' + Math.round(v / 100 * 100) + '"></span></div>'
+).join("");
+$("#focusDays").innerHTML = DAYS.map((d, i) =>
+  "<b" + (i === TODAY_IDX ? ' class="today"' : "") + ">" + d + "</b>"
+).join("");
+
+$("#actsWrap").innerHTML = ACTS.map(a =>
+  '<button class="act"><i style="background:var(' + a.c + ')"></i>' + a.text + "</button>"
+).join("");
+
+const winsList = $("#winsList");
+function renderWins(){
+  winsList.innerHTML = WINS.map((w, i) =>
+    '<li><button class="win" data-win="' + i + '" aria-pressed="' + w.done + '">' +
+      '<span class="win-box">' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFDF7" stroke-width="3.4" ' +
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+      "</span>" +
+      '<span class="win-text">' + w.text + "</span>" +
+    "</button></li>"
+  ).join("");
+  const done = WINS.filter(w => w.done).length;
+  $("#winCount").textContent = done + " / " + WINS.length;
+}
+renderWins();
+
+/* 시간대에 맞춰 인사 */
+(function greet(){
+  const h = new Date().getHours();
+  const label = h < 6 ? "새벽" : h < 12 ? "아침" : h < 18 ? "오후" : "저녁";
+  $("#dayLabel").textContent = label + " · " + (new Date().getMonth() + 1) + "월 " + new Date().getDate() + "일";
+})();
+
+/* ══════════════════════════════════════════════════════════
+   STEP 4 — Canvas 공통 엔진
+   rAF 하나로 세 캔버스를 돌린다. 화면 밖이면 그리지 않는다.
+   ══════════════════════════════════════════════════════════ */
+function setupCanvas(cv){
+  const ctx = cv.getContext("2d");
+  const state = { w:0, h:0, dpr:1, visible:true };
+  function resize(){
+    const r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    state.w = r.width; state.h = r.height; state.dpr = dpr;
+    cv.width = Math.round(r.width * dpr);
+    cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  const io = new IntersectionObserver(e => { state.visible = e[0].isIntersecting; }, { threshold: 0 });
+  io.observe(cv);
+  return { cv, ctx, state, resize };
+}
+
+const lerp  = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rand  = (a, b) => a + Math.random() * (b - a);
+
+/* 커서 — 모든 캔버스가 공유한다 */
+const pointer = { x:-9999, y:-9999, active:false };
+addEventListener("pointermove", e => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true; }, { passive:true });
+addEventListener("pointerleave", () => { pointer.active = false; pointer.x = pointer.y = -9999; });
+
+const canvases = [];
+function tick(now){
+  for (const c of canvases) if (c.state.visible) c.draw(now);
+  requestAnimationFrame(tick);
+}
+
+/* ══════════════════════════════════════════════════════════
+   INTERACTION 01·02·03 — Mood Universe
+   고른 감정이 중앙에 자리잡고, 입자가 그 주위에 작은 세계를 만든다.
+   커서가 가까이 가면 아주 약하게 끌려온다. 누르면 살짝 눌렸다 돌아온다.
+   ══════════════════════════════════════════════════════════ */
+const moodC = setupCanvas($("#moodCanvas"));
+const universe = {
+  mood:null,
+  parts:[],
+  ripples:[],
+  core:{ x:0, y:0, r:0, scale:1, vScale:0, squash:0, vSquash:0, drag:false, dx:0, dy:0 },
+  t:0
+};
+
+function cssColor(v){
+  return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+}
+
+/* 감정마다 입자의 성격이 다르다 */
+const PARTICLE_STYLE = {
+  excited:  { form:"circle",   n:26, speed:.55, size:[5,11] },
+  joyful:   { form:"flower",   n:18, speed:.35, size:[9,16] },
+  grateful: { form:"circle",   n:24, speed:.22, size:[6,13] },
+  energized:{ form:"hex",      n:22, speed:.6,  size:[6,12] },
+  sensitive:{ form:"circle",   n:20, speed:.2,  size:[5,11] },
+  confused: { form:"capsule",  n:20, speed:.4,  size:[6,12] },
+  bored:    { form:"circle",   n:16, speed:.14, size:[6,12] },
+  stressed: { form:"triangle", n:22, speed:.5,  size:[6,12] },
+  angry:    { form:"triangle", n:24, speed:.62, size:[5,11] },
+  insecure: { form:"circle",   n:20, speed:.3,  size:[4,9] },
+  hurt:     { form:"drop",     n:18, speed:.24, size:[6,13] },
+  guilty:   { form:"square",   n:18, speed:.2,  size:[6,12] }
+};
+
+function spawnIdle(){
+  const S = moodC.state;
+  universe.parts = [];
+  const n = REDUCED ? 6 : 16;
+  for (let i = 0; i < n; i++){
+    const a = Math.random() * Math.PI * 2;
+    const d = rand(S.w * .18, S.w * .43);
+    universe.parts.push({
+      x:S.w / 2 + Math.cos(a) * d, y:S.h / 2 + Math.sin(a) * d,
+      vx:0, vy:0, r:rand(4, 9), a:0, va:rand(-.01, .01),
+      alpha:0, alphaTo:rand(.5, .9), orbit:d, phase:Math.random() * Math.PI * 2,
+      form:"circle", speed:.18
+    });
+  }
+}
+
+function spawnUniverse(mood){
+  const st = PARTICLE_STYLE[mood.id];
+  const S  = moodC.state;
+  universe.mood = mood;
+  universe.parts = [];
+  const n = REDUCED ? Math.round(st.n * .4) : st.n;
+  for (let i = 0; i < n; i++){
+    const a = Math.random() * Math.PI * 2;
+    const d = rand(S.w * .16, S.w * .42);
+    universe.parts.push({
+      x:S.w / 2 + Math.cos(a) * d, y:S.h / 2 + Math.sin(a) * d,
+      vx:rand(-.3, .3), vy:rand(-.3, .3),
+      r:rand(st.size[0], st.size[1]),
+      a:Math.random() * Math.PI * 2, va:rand(-.02, .02),
+      alpha:0, alphaTo:rand(.45, .95),
+      orbit:d, phase:Math.random() * Math.PI * 2,
+      form:st.form, speed:st.speed
+    });
+  }
+  universe.ripples.push({ r:0, alpha:.5 });
+  universe.core.scale = .72;
+  universe.core.vScale = 0;
+}
+
+function drawParticleForm(ctx, p, color){
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.a);
+  ctx.globalAlpha = p.alpha;
+  ctx.fillStyle = color;
+  const r = p.r;
+  if (p.form === "circle"){ ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill(); }
+  else if (p.form === "square"){ ctx.beginPath(); ctx.roundRect(-r, -r, r * 2, r * 2, r * .45); ctx.fill(); }
+  else if (p.form === "triangle"){
+    ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * .92, r * .72); ctx.lineTo(-r * .92, r * .72);
+    ctx.closePath(); ctx.fill();
+  }
+  else if (p.form === "capsule"){ ctx.beginPath(); ctx.roundRect(-r * 1.4, -r * .6, r * 2.8, r * 1.2, r * .6); ctx.fill(); }
+  else if (p.form === "hex"){
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2 - Math.PI / 2;
+      ctx[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r); }
+    ctx.closePath(); ctx.fill();
+  }
+  else if (p.form === "drop"){
+    ctx.beginPath(); ctx.moveTo(0, -r * 1.3);
+    ctx.bezierCurveTo(r, -r * .2, r, r, 0, r);
+    ctx.bezierCurveTo(-r, r, -r, -r * .2, 0, -r * 1.3);
+    ctx.fill();
+  }
+  else if (p.form === "flower"){
+    for (let i = 0; i < 5; i++){ const a = i / 5 * Math.PI * 2;
+      ctx.beginPath(); ctx.arc(Math.cos(a) * r * .5, Math.sin(a) * r * .5, r * .5, 0, 7); ctx.fill(); }
+  }
+  ctx.restore();
+}
+
+/* 중앙 캐릭터를 캔버스에 직접 그린다 (DOM SVG와 같은 문법) */
+function drawCore(ctx, m, cx, cy, R, sx, sy){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(R / 100 * sx, R / 100 * sy);
+  ctx.translate(-50, -50);
+  ctx.fillStyle = cssColor(m.color);
+  ctx.fill(new Path2D(SHAPE_PATH[m.shape]));
+
+  const ink = cssColor("--ink");
+  ctx.fillStyle = ink; ctx.strokeStyle = ink;
+  ctx.lineWidth = 4; ctx.lineCap = "round";
+
+  /* 눈 — 커서 방향을 아주 조금 따라본다 */
+  let ox = 0, oy = 0;
+  if (pointer.active){
+    const rect = moodC.cv.getBoundingClientRect();
+    ox = clamp((pointer.x - rect.left - cx) / 90, -1, 1) * 2.6;
+    oy = clamp((pointer.y - rect.top - cy) / 90, -1, 1) * 2.2;
+  }
+  const e = m.eye;
+  if (e === "happy" || e === "sad"){
+    const s = e === "happy" ? -1 : 1;
+    ctx.beginPath();
+    ctx.moveTo(33, 47); ctx.quadraticCurveTo(37, 47 + 5 * s, 41, 47);
+    ctx.moveTo(59, 47); ctx.quadraticCurveTo(63, 47 + 5 * s, 67, 47);
+    ctx.stroke();
+  } else if (e === "flat"){
+    ctx.beginPath(); ctx.roundRect(33 + ox, 46 + oy, 10, 4, 2); ctx.roundRect(57 + ox, 46 + oy, 10, 4, 2); ctx.fill();
+  } else {
+    const rr = e === "wide" ? 6 : e === "small" ? 3.2 : 4.8;
+    const ey = e === "tilt" ? [45, 51] : [47, 47];
+    ctx.beginPath();
+    ctx.arc(38 + ox, ey[0] + oy, rr, 0, 7);
+    ctx.arc(62 + ox, ey[1] + oy, rr, 0, 7);
+    ctx.fill();
+    if (e === "angry"){
+      ctx.beginPath(); ctx.lineWidth = 3.6;
+      ctx.moveTo(31, 41); ctx.lineTo(42, 46); ctx.moveTo(69, 41); ctx.lineTo(58, 46); ctx.stroke();
+    }
+  }
+
+  ctx.lineWidth = 4;
+  if (m.mouth === "smile"){ ctx.beginPath(); ctx.moveTo(41, 64); ctx.quadraticCurveTo(50, 72, 59, 64); ctx.stroke(); }
+  else if (m.mouth === "open"){ ctx.beginPath(); ctx.moveTo(41, 62); ctx.quadraticCurveTo(50, 74, 59, 62); ctx.fill(); }
+  else if (m.mouth === "wave"){
+    ctx.beginPath(); ctx.lineWidth = 3.6;
+    ctx.moveTo(39, 65); ctx.quadraticCurveTo(44, 60, 49, 65); ctx.quadraticCurveTo(54, 70, 59, 65); ctx.stroke();
+  }
+  else { ctx.beginPath(); ctx.roundRect(43, 63, 14, 4, 2); ctx.fill(); }
+  ctx.restore();
+}
+
+moodC.draw = function(){
+  const { ctx, state:S } = moodC;
+  ctx.clearRect(0, 0, S.w, S.h);
+  universe.t += 1;
+
+  const cx = S.w / 2, cy = S.h / 2;
+  const core = universe.core;
+
+  /* 바탕 원 */
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, Math.min(S.w, S.h) / 2 - 1, 0, 7);
+  ctx.fillStyle = universe.mood ? cssColor(universe.mood.color + "-soft") + "55" : cssColor("--surface-soft");
+  ctx.fill(); ctx.restore();
+
+  /* 파동 */
+  for (let i = universe.ripples.length - 1; i >= 0; i--){
+    const rp = universe.ripples[i];
+    rp.r += (Math.min(S.w, S.h) * .5 - rp.r) * .045;
+    rp.alpha *= .965;
+    if (rp.alpha < .02) { universe.ripples.splice(i, 1); continue; }
+    ctx.beginPath(); ctx.arc(cx, cy, rp.r, 0, 7);
+    ctx.strokeStyle = cssColor(universe.mood ? universe.mood.color : "--purple");
+    ctx.globalAlpha = rp.alpha; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+
+  const color = universe.mood ? cssColor(universe.mood.color) : cssColor("--hairline");
+  const rect = moodC.cv.getBoundingClientRect();
+  const px = pointer.x - rect.left, py = pointer.y - rect.top;
+
+  /* 입자 — 궤도를 돌면서 커서에 약하게 끌린다 */
+  for (const p of universe.parts){
+    p.alpha = lerp(p.alpha, p.alphaTo, .04);
+    p.phase += .0022 * p.speed * (REDUCED ? .3 : 1);
+    const ox = cx + Math.cos(p.phase * 6 + p.orbit) * p.orbit;
+    const oy = cy + Math.sin(p.phase * 6 + p.orbit) * p.orbit;
+    p.vx += (ox - p.x) * .0016;
+    p.vy += (oy - p.y) * .0016;
+
+    if (pointer.active){                              // INTERACTION 02
+      const dx = px - p.x, dy = py - p.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < 150 * 150 && d2 > 1){
+        const d = Math.sqrt(d2);
+        const f = (1 - d / 150) * .085;               // 아주 약하게
+        p.vx += dx / d * f; p.vy += dy / d * f;
+      }
+    }
+    p.vx *= .965; p.vy *= .965;                        // friction
+    p.x += p.vx; p.y += p.vy;
+    p.a += p.va;
+    drawParticleForm(ctx, p, color);
+  }
+  ctx.globalAlpha = 1;
+
+  if (!universe.mood) return;              // 아직 안 골랐으면 캐릭터는 없다
+
+  /* 중앙 캐릭터 — spring + squash (INTERACTION 03) */
+  const targetScale = core.drag ? .9 : 1;
+  core.vScale += (targetScale - core.scale) * .16;
+  core.vScale *= .74;
+  core.scale += core.vScale;
+
+  const targetSquash = core.drag ? .12 : 0;
+  core.vSquash += (targetSquash - core.squash) * .18;
+  core.vSquash *= .72;
+  core.squash += core.vSquash;
+
+  const breathe = REDUCED ? 0 : Math.sin(universe.t * .018) * .012;
+  const R = Math.min(S.w, S.h) * .225;
+  const sx = (core.scale + breathe) * (1 + core.squash);
+  const sy = (core.scale + breathe) * (1 - core.squash);
+  core.x = lerp(core.x || cx, cx + core.dx, .16);
+  core.y = lerp(core.y || cy, cy + core.dy, .16);
+  drawCore(ctx, universe.mood, core.x, core.y, R, sx, sy);
+};
+canvases.push(moodC);
+
+/* ══════════════════════════════════════════════════════════
+   INTERACTION 05 — Progress Orb
+   진행률이 오를수록 주변 입자가 자란다. 100%에서 조용히 축하한다.
+   ══════════════════════════════════════════════════════════ */
+const orbC = setupCanvas($("#orbCanvas"));
+const orb = { target:0, shown:0, seeds:[], sparks:[], celebrated:false, t:0 };
+for (let i = 0; i < 14; i++){
+  orb.seeds.push({ a:i / 14 * Math.PI * 2, r:0, rTo:rand(3, 6.5), wob:Math.random() * 7 });
+}
+function setProgress(v){ orb.target = clamp(v, 0, 1); orb.celebrated = orb.celebrated && v >= 1; }
+
+orbC.draw = function(){
+  const { ctx, state:S } = orbC;
+  ctx.clearRect(0, 0, S.w, S.h);
+  orb.t++;
+  orb.shown = lerp(orb.shown, orb.target, .045);
+  const cx = S.w / 2, cy = S.h / 2, R = Math.min(S.w, S.h) * .33;
+
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7);
+  ctx.strokeStyle = cssColor("--hairline"); ctx.lineWidth = 10; ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + orb.shown * Math.PI * 2);
+  ctx.strokeStyle = cssColor("--orange"); ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.stroke();
+
+  /* 궤도 위의 씨앗 — 진행률만큼 자란다 */
+  orb.seeds.forEach((s, i) => {
+    const on = (i / orb.seeds.length) < orb.shown;
+    s.r = lerp(s.r, on ? s.rTo : 1.2, .05);
+    const wob = REDUCED ? 0 : Math.sin(orb.t * .014 + s.wob) * 4;
+    const rr = R + 22 + wob;
+    const x = cx + Math.cos(s.a - Math.PI / 2) * rr;
+    const y = cy + Math.sin(s.a - Math.PI / 2) * rr;
+    ctx.beginPath(); ctx.arc(x, y, s.r, 0, 7);
+    ctx.fillStyle = on ? cssColor("--purple") : cssColor("--hairline");
+    ctx.fill();
+  });
+
+  if (orb.target >= 1 && !orb.celebrated && orb.shown > .985){
+    orb.celebrated = true;
+    for (let i = 0; i < 14; i++)
+      orb.sparks.push({ x:cx, y:cy, a:Math.random() * 7, v:rand(1.1, 2.6), life:1, r:rand(2, 4) });
+  }
+  for (let i = orb.sparks.length - 1; i >= 0; i--){
+    const s = orb.sparks[i];
+    s.x += Math.cos(s.a) * s.v; s.y += Math.sin(s.a) * s.v;
+    s.v *= .955; s.life -= .016;
+    if (s.life <= 0){ orb.sparks.splice(i, 1); continue; }
+    ctx.globalAlpha = s.life; ctx.fillStyle = cssColor("--yellow");
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  $("#orbPct").textContent = Math.round(orb.shown * 100) + "%";
+};
+canvases.push(orbC);
+
+/* ══════════════════════════════════════════════════════════
+   INTERACTION 04 — Daily Energy Garden
+   집중한 만큼 꽃이, 쉰 만큼 잎이 자란다. small win을 체크하면 한 송이 심긴다.
+   ══════════════════════════════════════════════════════════ */
+const gardenC = setupCanvas($("#gardenCanvas"));
+const garden = { plants:[], t:0 };
+
+function plant(kind, xRatio){
+  const S = gardenC.state;
+  garden.plants.push({
+    kind, x:(xRatio != null ? xRatio : Math.random()) * (S.w || 400),
+    h:0, hTo:kind === "flower" ? rand(52, 96) : kind === "leaf" ? rand(26, 46) : rand(16, 26),
+    sway:Math.random() * 7, hue:Math.floor(rand(0, 4)), bloom:0, born:garden.t
+  });
+}
+const GARDEN_COLORS = ["--pink", "--yellow", "--purple", "--orange"];
+
+gardenC.draw = function(){
+  const { ctx, state:S } = gardenC;
+  ctx.clearRect(0, 0, S.w, S.h);
+  garden.t++;
+  const base = S.h - 12;
+
+  ctx.beginPath();
+  ctx.moveTo(0, base + 6);
+  for (let x = 0; x <= S.w; x += 24) ctx.lineTo(x, base + 6 + Math.sin(x * .02) * 3);
+  ctx.lineTo(S.w, S.h); ctx.lineTo(0, S.h); ctx.closePath();
+  ctx.fillStyle = cssColor("--green"); ctx.globalAlpha = .35; ctx.fill(); ctx.globalAlpha = 1;
+
+  const rect = gardenC.cv.getBoundingClientRect();
+  const px = pointer.x - rect.left;
+
+  for (const p of garden.plants){
+    p.h = lerp(p.h, p.hTo, .045);
+    let sway = REDUCED ? 0 : Math.sin(garden.t * .012 + p.sway) * 3;
+    if (pointer.active && Math.abs(px - p.x) < 70)   // 커서가 지나가면 살짝 기운다
+      sway += (px - p.x) / 70 * -5;
+
+    ctx.save();
+    ctx.translate(p.x, base);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(sway * .5, -p.h * .55, sway, -p.h);
+    ctx.strokeStyle = cssColor("--green"); ctx.lineWidth = 2.6; ctx.lineCap = "round"; ctx.stroke();
+
+    if (p.kind === "flower"){
+      p.bloom = lerp(p.bloom, 1, .05);
+      const r = 7.5 * p.bloom;
+      ctx.translate(sway, -p.h);
+      ctx.fillStyle = cssColor(GARDEN_COLORS[p.hue]);
+      for (let i = 0; i < 5; i++){
+        const a = i / 5 * Math.PI * 2 + garden.t * .002;
+        ctx.beginPath(); ctx.arc(Math.cos(a) * r * .85, Math.sin(a) * r * .85, r * .72, 0, 7); ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(0, 0, r * .5, 0, 7); ctx.fillStyle = cssColor("--surface"); ctx.fill();
+    } else if (p.kind === "leaf"){
+      ctx.translate(sway, -p.h);
+      ctx.rotate(-.4);
+      ctx.beginPath(); ctx.ellipse(6, 0, 9, 4.6, 0, 0, 7);
+      ctx.fillStyle = cssColor("--green"); ctx.fill();
+    } else {
+      ctx.translate(sway, -p.h);
+      ctx.beginPath(); ctx.arc(0, 0, 3.4, 0, 7);
+      ctx.fillStyle = cssColor("--green"); ctx.fill();
+    }
+    ctx.restore();
+  }
+};
+canvases.push(gardenC);
+
+/* 오늘 데이터로 정원을 채운다 */
+function seedGarden(){
+  garden.plants = [];
+  const focus = FOCUS[TODAY_IDX];
+  const flowers = Math.round(focus / 22);
+  const leaves  = Math.round((100 - focus) / 16);
+  for (let i = 0; i < flowers; i++) plant("flower", (i + .5) / (flowers + 1));
+  for (let i = 0; i < leaves;  i++) plant("leaf",   Math.random());
+  for (let i = 0; i < 5; i++)       plant("sprout", Math.random());
+  WINS.forEach((w, i) => { if (w.done) plant("flower", (i + 1) / (WINS.length + 1)); });
+  $("#gardenChip").textContent = focus > 70 ? "꽉 채운 하루" : focus > 40 ? "고르게 보낸 하루" : "잔잔한 하루";
+}
+
+/* ══════════════════════════════════════════════════════════
+   STEP 3 — 인터랙션 배선
+   ══════════════════════════════════════════════════════════ */
+
+/* 감정 고르기 */
+let picked = null;
+moodGrid.addEventListener("click", e => {
+  const btn = e.target.closest("[data-mood]");
+  if (!btn) return;
+  const m = MOOD_BY[btn.dataset.mood];
+  picked = m.id;
+
+  moodGrid.querySelectorAll(".mood").forEach(b =>
+    b.setAttribute("aria-pressed", String(b === btn)));
+
+  spawnUniverse(m);
+  $("#universeHint").style.opacity = "0";
+
+  const msg = $("#universeMsg");
+  msg.classList.remove("on");
+  setTimeout(() => { msg.innerHTML = m.msg; msg.classList.add("on"); }, 180);
+
+  $("#moodNowFace").innerHTML = faceSVG(m);
+  $("#moodNowLabel").textContent = m.ko;
+  $("#moodNowNote").textContent = "기록해둘게. 내일도 물어볼게.";
+  document.querySelector(".c-mood").style.background = cssColor(m.color + "-soft");
+});
+
+/* INTERACTION 03 — 중앙 캐릭터를 누르고 끌면 반응한다 */
+const mc = $("#moodCanvas");
+function corePos(e){
+  const r = mc.getBoundingClientRect();
+  return { x:e.clientX - r.left, y:e.clientY - r.top, r };
+}
+mc.addEventListener("pointerdown", e => {
+  if (!universe.mood) return;
+  const p = corePos(e);
+  const cx = moodC.state.w / 2 + universe.core.dx, cy = moodC.state.h / 2 + universe.core.dy;
+  const R = Math.min(moodC.state.w, moodC.state.h) * .225;
+  if (Math.hypot(p.x - cx, p.y - cy) > R * 1.25) return;
+  universe.core.drag = true;
+  mc.setPointerCapture(e.pointerId);
+});
+mc.addEventListener("pointermove", e => {
+  if (!universe.core.drag) return;
+  const p = corePos(e);
+  const lim = moodC.state.w * .12;
+  universe.core.dx = clamp(p.x - moodC.state.w / 2, -lim, lim);
+  universe.core.dy = clamp(p.y - moodC.state.h / 2, -lim, lim);
+});
+function releaseCore(){
+  if (!universe.core.drag) return;
+  universe.core.drag = false;
+  universe.core.dx = universe.core.dy = 0;          // spring back
+  universe.ripples.push({ r:0, alpha:.34 });
+}
+mc.addEventListener("pointerup", releaseCore);
+mc.addEventListener("pointercancel", releaseCore);
+
+/* small wins — 체크하면 정원에 한 송이 심긴다 */
+winsList.addEventListener("click", e => {
+  const btn = e.target.closest("[data-win]");
+  if (!btn) return;
+  const i = +btn.dataset.win;
+  WINS[i].done = !WINS[i].done;
+  btn.setAttribute("aria-pressed", String(WINS[i].done));
+  $("#winCount").textContent = WINS.filter(w => w.done).length + " / " + WINS.length;
+  if (WINS[i].done) plant("flower", (i + 1) / (WINS.length + 1));
+  setProgress(baseProgress + WINS.filter(w => w.done).length * .06);
+});
+
+$("#winAdd").addEventListener("click", () => {
+  const text = prompt("오늘 잘한 작은 일 하나만 적어줘.");
+  if (!text || !text.trim()) return;
+  WINS.push({ text:text.trim().slice(0, 60), done:false });
+  renderWins();
+});
+
+/* INTERACTION 06 — 카드 위 캐릭터의 눈이 커서를 조금 따라본다 */
+function followEyes(){
+  document.querySelectorAll("[data-eyes]").forEach(g => {
+    const svg = g.ownerSVGElement;
+    if (!svg) return;
+    const r = svg.getBoundingClientRect();
+    if (!r.width || !pointer.active) { g.style.transform = ""; return; }
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const dx = clamp((pointer.x - cx) / (r.width * 1.4), -1, 1) * 3.2;
+    const dy = clamp((pointer.y - cy) / (r.height * 1.4), -1, 1) * 2.6;
+    g.style.transform = "translate(" + dx + "px," + dy + "px)";
+    g.style.transition = "transform .5s var(--ease)";
+  });
+}
+
+/* 로고 캐릭터도 커서를 본다 */
+const logoMark = $("#logoMark");
+function followLogo(){
+  if (!pointer.active) { logoMark.style.transform = ""; return; }
+  const r = logoMark.getBoundingClientRect();
+  const dx = clamp((pointer.x - (r.left + r.width / 2)) / 400, -1, 1) * 2.5;
+  const dy = clamp((pointer.y - (r.top + r.height / 2)) / 400, -1, 1) * 2.5;
+  logoMark.style.transform = "translate(" + dx + "px," + dy + "px)";
+}
+
+let eyeTimer = 0;
+function eyeLoop(){
+  if (!REDUCED){ followEyes(); followLogo(); }
+  eyeTimer = setTimeout(() => requestAnimationFrame(eyeLoop), 60);   // 60fps까지 갈 필요 없다
+}
+
+/* ══════════════════════════════════════════════════════════
+   STEP 6 — 진입 · 초기화
+   ══════════════════════════════════════════════════════════ */
+const baseProgress = .5;
+
+function playIntro(){
+  const seq = [...document.querySelectorAll(".enter")];
+  seq.forEach((el, i) => setTimeout(() => el.classList.add("in"), REDUCED ? 0 : 70 * i + 60));
+
+  setTimeout(() => {
+    document.querySelectorAll(".bar span").forEach((s, i) => {
+      setTimeout(() => { s.style.height = FOCUS[i] + "%"; }, REDUCED ? 0 : i * 55);
+    });
+  }, REDUCED ? 0 : 420);
+
+  /* 오늘 집중 시간 카운트업 */
+  const target = FOCUS[TODAY_IDX], el = $("#focusNum");
+  if (REDUCED){ el.textContent = target; }
+  else {
+    const t0 = performance.now();
+    (function up(now){
+      const p = Math.min(1, (now - t0) / 900);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(up);
+    })(t0);
+  }
+
+  setTimeout(() => setProgress(baseProgress + WINS.filter(w => w.done).length * .06), REDUCED ? 0 : 700);
+}
+
+function resizeAll(){
+  canvases.forEach(c => c.resize());
+  if (!universe.mood) spawnIdle(); else spawnUniverse(universe.mood);
+  seedGarden();
+}
+let rTimer;
+addEventListener("resize", () => { clearTimeout(rTimer); rTimer = setTimeout(resizeAll, 160); });
+
+/* 시작 */
+spawnIdle();
+seedGarden();
+playIntro();
+eyeLoop();
+requestAnimationFrame(tick);
+
+/* 페이지를 떠날 때 정리 */
+addEventListener("pagehide", () => { clearTimeout(eyeTimer); });
+</script>
+</body>
+</html>
