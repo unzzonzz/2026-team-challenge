@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>선례(先例) — 먼저 간 사람들</title>
+<meta name="description" content="부모님이 반대할 때, 그 길을 이미 걸어본 사람의 이야기를 찾아주는 곳." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper:  '#F8F5EE',
+          paper2: '#FFFDF7',
+          ink:    '#221F1A',
+          ink2:   '#4A443B',
+          ink3:   '#7B7466',
+          line:   '#E3DCCC',
+          accent: '#A8432B'
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root{
+    --paper:#F8F5EE;
+    --paper2:#FFFDF7;
+    --ink:#221F1A;
+    --ink2:#4A443B;
+    --ink3:#7B7466;
+    --line:#E3DCCC;
+    --line2:#D3C9B4;
+    --accent:#A8432B;
+    --accent-soft:#F4E8E3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    letter-spacing:-0.021em;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+  }
+  ::selection{background:var(--accent);color:#fff}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;letter-spacing:inherit}
+  input{font:inherit;letter-spacing:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+  /* ---------- 공용 ---------- */
+  .wrap{width:100%;max-width:1080px;margin:0 auto;padding:0 24px}
+  .wrap-narrow{width:100%;max-width:760px;margin:0 auto;padding:0 24px}
+  .hairline{height:1px;background:var(--line);border:0}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase}
+  .serifnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  .brand{display:inline-flex;align-items:baseline;gap:8px;font-weight:800;font-size:19px;letter-spacing:-0.03em}
+  .brand small{font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.06em}
+
+  /* ---------- 인트로 ---------- */
+  #introOverlay{
+    position:fixed;inset:0;z-index:60;background:var(--paper);
+    display:grid;place-items:center;padding:24px;
+    transition:opacity .75s ease;
+  }
+  #introOverlay.gone{opacity:0;pointer-events:none}
+  .intro-line{
+    max-width:1000px;text-align:center;font-weight:800;
+    font-size:clamp(30px,6.4vw,62px);line-height:1.24;letter-spacing:-0.04em;
+    color:var(--ink);
+    opacity:0;transform:translateY(16px) scale(.985);
+    transition:opacity .55s ease,transform .75s cubic-bezier(.16,.84,.3,1);
+  }
+  .intro-line.show{opacity:1;transform:none}
+  #skipBtn{
+    position:fixed;top:20px;right:22px;z-index:70;
+    font-size:13px;font-weight:600;color:var(--ink3);
+    padding:8px 14px;border:1px solid var(--line2);border-radius:999px;
+    background:rgba(255,253,247,.7);backdrop-filter:blur(4px);
+    transition:color .2s,border-color .2s;
+  }
+  #skipBtn:hover{color:var(--ink);border-color:var(--ink3)}
+  #skipBtn[hidden]{display:none}
+
+  /* ---------- 등장 ---------- */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .9s cubic-bezier(.16,.84,.3,1)}
+  .reveal.on{opacity:1;transform:none}
+
+  /* ---------- 검색 ---------- */
+  .searchbar{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:10px 2px}
+  .searchbar input{
+    flex:1;min-width:0;background:transparent;border:0;outline:none;
+    font-size:clamp(17px,2.2vw,22px);font-weight:600;color:var(--ink);padding:6px 2px;
+  }
+  .searchbar input::placeholder{color:#A99F8D;font-weight:500}
+  .searchbar button{
+    flex:none;background:var(--ink);color:var(--paper2);font-weight:700;font-size:15px;
+    padding:11px 22px;border-radius:999px;transition:background .2s,transform .15s;
+  }
+  .searchbar button:hover{background:var(--accent)}
+  .searchbar button:active{transform:scale(.97)}
+  .searchbar.compact{border-bottom-width:1px;border-color:var(--line2)}
+  .searchbar.compact input{font-size:16px}
+  .searchbar.compact button{padding:9px 18px;font-size:14px}
+
+  .chip{
+    border:1px solid var(--line2);border-radius:999px;padding:9px 16px;
+    font-size:14px;font-weight:600;color:var(--ink2);background:var(--paper2);
+    transition:border-color .18s,color .18s,background .18s,transform .18s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+  /* ---------- 카드 ---------- */
+  .card{
+    background:var(--paper2);border:1px solid var(--line);border-radius:14px;
+    padding:26px 26px 22px;text-align:left;width:100%;display:flex;flex-direction:column;
+    transition:transform .25s cubic-bezier(.16,.84,.3,1),box-shadow .25s,border-color .25s;
+    box-shadow:0 1px 0 rgba(34,31,26,.03);
+  }
+  .card:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:0 14px 34px -18px rgba(34,31,26,.34)}
+  .card-enter{opacity:0;transform:translateY(24px)}
+  .card-enter.on{opacity:1;transform:none;transition:opacity .6s ease,transform .7s cubic-bezier(.16,.84,.3,1)}
+
+  .reason{
+    background:var(--accent-soft);border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:14px 16px;margin-top:18px;
+  }
+  .reason-label{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11.5px;font-weight:800;letter-spacing:.06em;color:var(--accent);margin-bottom:7px;
+  }
+  .reason-label i{width:6px;height:6px;background:var(--accent);border-radius:1px;display:inline-block;transform:rotate(45deg)}
+  .reason p{font-size:15px;line-height:1.62;color:#5C2A1B;font-weight:600;margin:0}
+
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
+  .badge-none{background:#E7F0E9;color:#2C6349}
+  .badge-some{background:#F7EBD6;color:#855314}
+  .badge-much{background:#F7E2E1;color:#8C3129}
+  .badge i{width:6px;height:6px;border-radius:999px;background:currentColor;display:inline-block}
+
+  .tag{font-size:12px;font-weight:600;color:var(--ink3);background:#F1ECE0;border-radius:6px;padding:4px 9px}
+
+  /* ---------- 스켈레톤 ---------- */
+  .sk{background:linear-gradient(90deg,#EFE9DC 0%,#F6F2E8 50%,#EFE9DC 100%);background-size:220% 100%;
+      animation:shimmer 1.4s linear infinite;border-radius:6px}
+  @keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
+
+  /* ---------- 타임라인 ---------- */
+  .tl{position:relative;padding-left:38px;margin:0;list-style:none}
+  .tl::before{content:'';position:absolute;left:9px;top:8px;bottom:24px;width:2px;background:var(--line2);border-radius:2px}
+  .tl-fill{position:absolute;left:9px;top:8px;width:2px;height:0;background:var(--accent);border-radius:2px;transition:height .14s linear}
+  .tl-item{position:relative;padding-bottom:38px;opacity:0;transform:translateY(18px);
+           transition:opacity .65s ease,transform .8s cubic-bezier(.16,.84,.3,1)}
+  .tl-item.in{opacity:1;transform:none}
+  .tl-dot{position:absolute;left:-38px;top:2px;width:20px;height:20px;border-radius:999px;
+          background:var(--paper);border:2px solid var(--line2);display:grid;place-items:center;
+          transition:border-color .5s ease,transform .5s cubic-bezier(.16,.84,.3,1)}
+  .tl-dot::after{content:'';width:8px;height:8px;border-radius:999px;background:var(--line2);transition:background .5s ease}
+  .tl-item.in .tl-dot{border-color:var(--accent);transform:scale(1.06)}
+  .tl-item.in .tl-dot::after{background:var(--accent)}
+
+  /* ---------- 인용 ---------- */
+  .quote{
+    background:#F1ECDF;border-radius:14px;padding:30px 30px 26px;position:relative;
+  }
+  .quote::before{
+    content:'\201C';position:absolute;top:2px;left:20px;font-size:88px;line-height:1;
+    color:var(--line2);font-family:Georgia,serif;
+  }
+  .quote p{position:relative;font-size:clamp(18px,2.5vw,23px);line-height:1.66;font-weight:700;color:#3A342B;margin:0}
+
+  .sec-title{font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--accent);margin-bottom:12px}
+  .body-text{font-size:16.5px;line-height:1.85;color:var(--ink2)}
+
+  .btn-primary{background:var(--ink);color:var(--paper2);font-weight:700;padding:16px 22px;border-radius:12px;
+               transition:background .2s,transform .15s;text-align:center}
+  .btn-primary:hover{background:var(--accent)}
+  .btn-primary:active{transform:scale(.985)}
+  .btn-ghost{border:1px solid var(--line2);color:var(--ink2);font-weight:700;padding:16px 22px;border-radius:12px;
+             transition:border-color .2s,color .2s;text-align:center}
+  .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+  /* ---------- 토스트 ---------- */
+  #toast{
+    position:fixed;left:50%;bottom:34px;transform:translate(-50%,18px);z-index:80;
+    background:var(--ink);color:var(--paper2);font-size:14.5px;font-weight:600;
+    padding:14px 22px;border-radius:999px;opacity:0;pointer-events:none;
+    transition:opacity .28s ease,transform .35s cubic-bezier(.16,.84,.3,1);
+    box-shadow:0 16px 40px -16px rgba(34,31,26,.5);max-width:88vw;text-align:center;
+  }
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- 부모 전용 페이지 ---------- */
+  .parent-view{background:#FFFDF6;color:#1F1C17}
+  .parent-view .p-body{font-size:21px;line-height:2.05;color:#38332B}
+  .parent-view h1{font-size:clamp(34px,5.4vw,48px);line-height:1.32;font-weight:800;letter-spacing:-0.035em}
+  .parent-view h2{font-size:clamp(24px,3.4vw,30px);font-weight:800;letter-spacing:-0.03em;line-height:1.4}
+  .gloss{color:#7A5A3C;font-weight:600;font-size:.86em}
+  .p-card{background:#FFFFFF;border:1px solid #E8E0CE;border-radius:16px;padding:34px 32px}
+  .p-step{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid #EFE8D8}
+  .p-step:last-child{border-bottom:0}
+  .p-year{flex:none;width:120px;font-size:19px;font-weight:800;color:#8A6A3E}
+
+  @media (max-width:640px){
+    .p-step{flex-direction:column;gap:6px}
+    .p-year{width:auto}
+    .quote{padding:26px 22px 22px}
+    .quote::before{font-size:66px;left:14px}
+  }
+
+  /* ---------- 접근성 ---------- */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{
+      animation-duration:.001ms !important;animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;
+    }
+    .reveal,.card-enter,.tl-item{opacity:1 !important;transform:none !important}
+    .intro-line{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<button id="skipBtn" hidden>인트로 건너뛰기</button>
+<div id="introOverlay" hidden><div class="intro-line" id="introLine"></div></div>
+
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   선례(先例) — 단일 파일 데모
+   API 키는 아래 한 줄에만 둔다. 비어 있으면 자동으로 폴백이 돈다.
+   ============================================================ */
+const API_KEY = "";
+const MODEL   = "claude-sonnet-4-6";
+
+const PEOPLE = [
+/* ───────── ① 특성화고 → 고졸 취업 ───────── */
+{
+  id:"p01", name:"정민수", age:27, currentJob:"제조 자동화 SW 개발자",
+  routeSummary:"특성화고 → 현장실습 → 산업기능요원 → 창업",
+  routeTags:["특성화고","고졸취업","병역특례","창업","제조","공장"],
+  timeline:[
+    {year:2016, age:17, title:"특성화고 2학년, 실습실에 남다", desc:"담임이 “너는 대학 갈 성적은 아니다”라고 했다. 이상하게 그 말이 편했다. 야자 대신 실습실에서 설비 제어를 만졌다."},
+    {year:2017, age:18, title:"현장실습으로 첫 공장", desc:"화성의 부품 공장. 하루 열 시간을 서 있었고 석 달 만에 그만두고 싶었다. 그만두겠다고 말하지 못한 이유는 부모님이 옳았다는 게 되기 때문이었다."},
+    {year:2018, age:19, title:"산업기능요원으로 남다", desc:"친구들이 입대할 때 나는 야근을 했다. 3년 동안 이 회사를 못 나간다는 계약서에 도장을 찍었다."},
+    {year:2020, age:21, title:"엑셀 대신 코드를 쓰다", desc:"생산 관리를 파이썬으로 자동화했더니 공장장이 나를 찾기 시작했다. 처음으로 내 이름이 붙은 일이 생겼다."},
+    {year:2021, age:22, title:"복무 만료, 이직", desc:"연봉이 두 배가 됐다. 명절에 처음으로 아버지가 아무 말도 안 하셨다."},
+    {year:2023, age:24, title:"동료 둘과 창업", desc:"현장에서 실제로 쓰는 자동화 도구를 만든다. 대박은 없었지만 3년째 망하지 않고 있다."},
+    {year:2026, age:27, title:"직원 여섯 명", desc:"아직 대학 졸업장은 없다. 이제는 그게 화제가 되지 않는다."}
+  ],
+  parentWords:"“그래서 너는 평생 기름때 묻히고 살 거야? 옆집 아들은 인서울 했다더라.” 실습 나간 첫날 저녁에 아버지가 그렇게 물으셨다. 어머니는 우시면서 “엄마 친구들한테 뭐라고 말하냐”고 하셨다.",
+  howItWent:"설득을 포기하고 숫자만 보여드렸다. 첫 월급 명세서를 식탁에 올려두고 아무 말도 안 했다. 그다음엔 회사에서 받은 표창장, 그다음엔 내가 만든 프로그램이 돌아가는 화면을 찍어서 보냈다. 말로 이기려고 했을 땐 한 번도 못 이겼는데, 증거를 쌓으니까 반년쯤 지나서 아버지가 먼저 “요즘 회사는 어떠냐”고 물어보셨다.",
+  parentNow:"아버지는 이제 친척들 앞에서 “얘가 회사를 차렸다”고 먼저 말씀하신다. 어머니는 아직도 “대학은 나중에라도 가라”고 하시지만, 예전처럼 화를 내진 않으신다. 작년에 어머니가 “그때 네 말 안 들어줘서 미안하다”고 하신 게 제일 어색했다.",
+  regret:{level:"없음", text:"길 자체는 후회 안 한다. 다만 열아홉에 3년짜리 계약서에 도장 찍을 때 아무도 나한테 조건을 설명해 주지 않았던 건 지금도 화가 난다. 후회가 아니라 억울함에 가깝다."}
+},
+{
+  id:"p02", name:"한지우", age:29, currentJob:"반도체 설비 엔지니어",
+  routeSummary:"특성화고 → 대기업 고졸 공채 → 사내대학 → 설비 엔지니어",
+  routeTags:["특성화고","고졸취업","대기업","사내대학","학벌","반도체"],
+  timeline:[
+    {year:2014, age:17, title:"특성화고 반도체과", desc:"중학교 성적으로 갈 수 있는 인문계가 있었는데 안 갔다. 담임과 부모님이 같은 편이 되어 나를 설득했다."},
+    {year:2016, age:19, title:"대기업 고졸 공채 합격", desc:"동기 300명 중 고졸이 40명이었다. 입사 첫날부터 우리는 서로를 알아봤다."},
+    {year:2018, age:21, title:"교대 근무 3년차", desc:"밤낮이 2주마다 바뀌는 생활. 대학 간 친구들이 축제 사진을 올릴 때 나는 방진복을 입고 있었다."},
+    {year:2020, age:23, title:"사내대학 입학", desc:"회사가 학비를 대는 정식 학위 과정. 주 3일 퇴근하고 수업을 들었다. 이게 내 인생에서 제일 힘든 2년이었다."},
+    {year:2023, age:26, title:"학위 취득, 직군 전환", desc:"오퍼레이터에서 엔지니어가 됐다. 명함이 바뀌던 날 어머니한테 사진을 찍어 보냈다."},
+    {year:2026, age:29, title:"파트 리더", desc:"내 밑에 4년제 졸업한 후배가 둘 있다. 아무도 신경 쓰지 않는데 나만 가끔 신경 쓴다."}
+  ],
+  parentWords:"“고등학교 3년 참으면 평생 편해진다는 게 말이 되니. 남들 다 가는 데는 다 이유가 있는 거야.” 어머니는 원서 쓰는 날까지 그 말을 하셨다. 아버지는 “네가 뭘 안다고 열여섯에 인생을 정하냐”고 하셨다.",
+  howItWent:"내가 이긴 게 아니라 합격증이 이겼다. 대기업 최종 합격 문자를 보여드린 날 두 분이 갑자기 조용해지셨다. 그전까지 반년 동안 밥상에서 싸웠는데, 회사 이름 하나에 다 정리되는 게 좀 허무했다. 결국 부모님이 반대한 건 특성화고가 아니라 '불확실한 미래'였다는 걸 그때 알았다.",
+  parentNow:"이제는 어머니가 동창 모임에서 내 회사 이름을 먼저 꺼내신다고 한다. 아버지는 명절마다 사촌 동생에게 “너도 지우처럼 기술을 배워라”라고 하신다. 그 말을 들을 때마다 나는 조용히 웃고 만다. 두 분 다 내가 사내대학 다닐 때 몇 번을 울었는지는 모르신다.",
+  regret:{level:"일부 있음", text:"돈과 커리어는 후회 없다. 다만 스물한 살, 스물두 살을 통째로 교대 근무에 갈아 넣은 건 지금도 아깝다. 회식 자리에서 대학 얘기가 나오면 아직도 목소리가 작아지는 나를 발견한다. 학벌은 극복했다고 생각했는데 완전히는 아니었다."}
+},
+{
+  id:"p03", name:"오세라", age:26, currentJob:"은행 본부 부서 직원",
+  routeSummary:"상업고 → 은행 고졸 채용 → 야간대 병행 → 본부 발령",
+  routeTags:["상업고","특성화고","고졸취업","은행","야간대","금융"],
+  timeline:[
+    {year:2017, age:17, title:"상업고 진학", desc:"자격증을 열 개 넘게 땄다. 학교가 시켜서가 아니라 이게 내 유일한 무기라고 생각해서였다."},
+    {year:2019, age:19, title:"은행 고졸 채용 합격", desc:"열아홉에 정장을 샀다. 창구에서 나보다 스무 살 많은 손님들에게 존댓말을 배웠다."},
+    {year:2020, age:20, title:"창구에서 버틴 1년", desc:"“어린 애가 뭘 아냐”는 말을 하루에 두 번씩 들었다. 그 말이 부모님 말과 똑같아서 더 아팠다."},
+    {year:2021, age:21, title:"야간대 입학", desc:"6시에 퇴근해서 7시에 강의실. 대학이 갖고 싶었던 게 아니라 대화에 끼고 싶었다."},
+    {year:2024, age:24, title:"본부 부서 이동", desc:"창구 5년차 데이터를 들고 지원했다. 현장을 아는 사람이 필요하다고 했다."},
+    {year:2026, age:26, title:"입행 8년차", desc:"동기 중에 제일 오래 다녔다. 스물여섯에 경력 8년이라는 게 가끔 이상하다."}
+  ],
+  parentWords:"“여자애가 은행 다니면 좋지”라고 하시다가도 “그래도 대학은 나와야 시집이라도 잘 가지”라고 하셨다. 아버지는 “엄마 친구 딸은 서울에 있는 대학 갔다더라”를 3년 동안 반복하셨다.",
+  howItWent:"싸우지 않았다. 대신 매달 적금 통장을 보여드렸다. 스물두 살에 부모님 대출 이자를 대신 내드리기 시작하면서 그 말이 자연스럽게 없어졌다. 야간대에 다닌 것도 사실은 부모님 때문이 아니라 내가 창구에서 무시당하지 않으려고 시작한 거였는데, 결과적으로는 두 분한테 명분이 됐다.",
+  parentNow:"어머니는 이제 “네가 우리 집에서 제일 낫다”고 하신다. 아버지는 여전히 말수가 없으시지만 내가 본부로 갔다는 걸 아직도 사람들한테 설명하고 다니신다. 지금은 두 분이 나한테 진로를 물어보신다.",
+  regret:{level:"없음", text:"열아홉에 사회에 나온 걸 후회하진 않는다. 그 나이에 배운 것들이 지금 나를 먹여 살린다. 다만 스무 살의 나한테 “너 지금 잘하고 있어”라고 말해 줄 사람이 한 명도 없었던 건 두고두고 생각난다."}
+},
+{
+  id:"p04", name:"배준영", age:31, currentJob:"항공정비사",
+  routeSummary:"마이스터고 → 항공사 정비 입사 → 정비 자격 취득 → 팀 이동",
+  routeTags:["마이스터고","특성화고","고졸취업","항공","자격증","기술직"],
+  timeline:[
+    {year:2012, age:17, title:"마이스터고 항공과", desc:"비행기가 좋아서가 아니라 취업률 98%라는 숫자가 좋아서 갔다."},
+    {year:2014, age:19, title:"항공사 입사", desc:"열아홉에 격납고에 들어갔다. 선배들이 나를 “학생”이라고 불렀다."},
+    {year:2016, age:21, title:"군 복무", desc:"공군 정비병. 여기서 배운 게 회사로 돌아왔을 때 제일 컸다."},
+    {year:2020, age:25, title:"항공정비사 면허 취득", desc:"3년을 준비했다. 이 면허는 학벌을 안 본다. 그게 이 직업의 제일 좋은 점이다."},
+    {year:2022, age:27, title:"코로나 감원 시기를 버티다", desc:"동료 절반이 무급휴직에 들어갔다. 내가 남은 이유는 면허가 있어서였다."},
+    {year:2026, age:31, title:"라인 정비 팀", desc:"이제 신입에게 “학생”이라고 부르지 않는다."}
+  ],
+  parentWords:"“기술 배워서 뭐 하려고. 요즘은 대학 안 나오면 사람 취급 못 받아.” 아버지 본인이 고졸이셔서 더 강하게 반대하셨다. “나처럼 살지 말라고 공부시킨 건데 네가 왜 내 길을 따라오냐”고 하셨다.",
+  howItWent:"아버지가 반대하신 이유가 나를 무시해서가 아니라 당신 인생을 후회해서라는 걸 스물다섯에 알았다. 면허를 딴 날 자격증 사본을 들고 가서 “이건 아버지 때는 없던 거예요”라고 말씀드렸다. 그 말에 처음으로 아버지가 우셨다. 결국 우리가 싸운 건 진로가 아니라 아버지의 상처였다.",
+  parentNow:"아버지는 내 유니폼 사진을 지갑에 넣고 다니신다. 어머니는 여전히 “위험하지 않냐”고만 물으신다. 두 분 다 이제 대학 얘기는 안 하신다.",
+  regret:{level:"없음", text:"후회 없다. 이 일은 손이 기억하는 일이라서 나이 먹어도 안 뺏긴다. 굳이 아쉬운 걸 꼽으면 스물다섯까지 아버지랑 제대로 대화한 적이 없다는 것 정도다."}
+},
+
+/* ───────── ② 대학 자퇴 → 개발자/디자이너 ───────── */
+{
+  id:"p05", name:"김태윤", age:28, currentJob:"백엔드 개발자",
+  routeSummary:"국립대 기계공학 자퇴 → 국비 부트캠프 → 스타트업 → 이직",
+  routeTags:["대학자퇴","자퇴","개발자","부트캠프","백엔드","전공불일치"],
+  timeline:[
+    {year:2017, age:19, title:"기계공학과 입학", desc:"점수 맞춰서 갔다. 첫 학기 전공 수업에서 내가 여기 있으면 안 된다는 걸 알았다."},
+    {year:2018, age:20, title:"1년 반 만에 휴학", desc:"학사경고를 두 번 받았다. 부모님께는 “좀 쉬겠다”고만 말했다."},
+    {year:2019, age:21, title:"자퇴 통보", desc:"휴학 연장이 안 된다는 걸 알고 그냥 자퇴서를 냈다. 부모님께는 낸 다음에 말했다. 이게 지금도 제일 미안한 부분이다."},
+    {year:2020, age:22, title:"국비 부트캠프 6개월", desc:"매일 아침 9시에 강남으로 갔다. 대학 다닐 때보다 훨씬 많이 공부했다는 게 웃겼다."},
+    {year:2021, age:23, title:"직원 12명 스타트업 입사", desc:"연봉 2,800. 부모님께는 3,200이라고 말했다."},
+    {year:2023, age:25, title:"이직, 연봉 두 배", desc:"그때 비로소 진짜 숫자를 말씀드렸다."},
+    {year:2026, age:28, title:"5년차 백엔드", desc:"지금은 부트캠프 수료생 면접을 본다. 그 자리에 앉으면 그때 내가 보인다."}
+  ],
+  parentWords:"“국립대를 왜 버려. 등록금 아까운 줄 모르지.” 어머니는 자퇴 소식을 듣고 사흘을 말을 안 하셨다. 아버지는 “컴퓨터 그거 학원 6개월 다녀서 되는 거면 세상 사람들이 다 하지”라고 하셨다.",
+  howItWent:"처음 반년은 그냥 버텼다. 설명해도 안 통한다는 걸 알아서 아예 설명을 안 했다. 대신 매주 일요일에 집에 가서 밥을 먹었다. 취업하고 나서야 “왜 그때 그렇게까지 했냐”고 아버지가 물어보셨고, 그때 처음으로 기계공학 실험실에서 내가 얼마나 무능했는지를 말씀드렸다. 그 얘기를 3년 동안 한 번도 안 했다는 게 문제였다.",
+  parentNow:"아버지는 요즘 뉴스에 개발자 얘기가 나오면 나한테 링크를 보내신다. 어머니는 아직도 “사이버대라도 등록하지 그러니”라고 하시는데 이제는 잔소리보다는 인사에 가깝다. 두 분 다 내 자퇴를 인정한 게 아니라 내 지금을 인정하신 것 같다.",
+  regret:{level:"없음", text:"자퇴는 후회 없다. 다만 통보하고 나서 말한 순서는 후회한다. 부모님이 화난 건 자퇴가 아니라 자기들이 마지막에 알았다는 사실이었다. 그건 내가 잘못한 게 맞다."}
+},
+{
+  id:"p06", name:"송하린", age:26, currentJob:"프로덕트 디자이너",
+  routeSummary:"경영학과 자퇴 → 독학 UI 디자인 → 에이전시 → 인하우스",
+  routeTags:["대학자퇴","자퇴","디자이너","독학","UI","포트폴리오"],
+  timeline:[
+    {year:2019, age:19, title:"경영학과 입학", desc:"무난한 선택이었다. 무난한 게 제일 안 맞는 사람이라는 걸 몰랐다."},
+    {year:2020, age:20, title:"비대면 수업 1년", desc:"집에서 강의를 틀어놓고 하루 종일 디자인 튜토리얼을 봤다. 학점은 2.1이었다."},
+    {year:2021, age:21, title:"자퇴", desc:"부모님과 두 달을 싸웠다. 마지막엔 “1년 안에 취업 못 하면 복학하겠다”는 조건을 걸고 나왔다."},
+    {year:2022, age:22, title:"에이전시 막내 입사", desc:"조건부 약속의 마지막 달에 붙었다. 야근이 일상이었지만 그 1년에 포트폴리오가 다 만들어졌다."},
+    {year:2024, age:24, title:"인하우스 이직", desc:"제품 하나를 처음부터 끝까지 맡았다."},
+    {year:2026, age:26, title:"주니어에서 미들로", desc:"이제 내 밑에 인턴이 있다."}
+  ],
+  parentWords:"“디자인은 취미로 해. 그거 해서 밥 먹고 살 수 있어?” 어머니가 제일 많이 하신 말이다. 아버지는 “학원비 대줄 테니까 학교는 다니면서 해라. 왜 굳이 다 버리냐”고 하셨다.",
+  howItWent:"기한을 스스로 걸었다. “1년 안에 취업 못 하면 그때는 부모님 말 듣겠다”고 문서처럼 말씀드렸더니 반대가 관리 가능한 걱정으로 바뀌었다. 그 1년 동안 매달 결과물을 카톡으로 보냈다. 붙거나 떨어진 공고 수까지 다 알려드렸다. 부모님이 무서웠던 건 실패가 아니라 아무것도 모르는 상태였다.",
+  parentNow:"어머니는 이제 회사 앱을 깔아놓고 “여기 네가 만든 거냐”고 물으신다. 아버지는 내 명함을 지갑에 넣고 다니시다가 최근에 다 나눠주셨다고 한다.",
+  regret:{level:"없음", text:"후회 없다. 오히려 그 1년 조건을 스스로 건 게 내 인생에서 제일 잘한 결정이었다. 되돌아가도 학교는 그만둔다."}
+},
+{
+  id:"p07", name:"문재혁", age:30, currentJob:"공기업 전산직 (재입학 후 졸업)",
+  routeSummary:"공대 자퇴 → 개발 취업 → 번아웃 → 다시 대학 → 공기업",
+  routeTags:["대학자퇴","자퇴","개발자","번아웃","재입학","다시대학","후회"],
+  timeline:[
+    {year:2015, age:19, title:"공대 입학", desc:"부모님이 원하시던 학교였다. 나는 별로였다."},
+    {year:2017, age:21, title:"2학년 자퇴", desc:"개발로 먹고살 수 있다는 확신이 있었다. 그 확신의 근거는 사실 커뮤니티 글 몇 개였다."},
+    {year:2018, age:22, title:"소규모 회사 입사", desc:"연봉 2,400에 개발자 두 명. 배울 사람이 없었다."},
+    {year:2020, age:24, title:"3년차 이직 시도, 전부 탈락", desc:"서류에서 잘렸다. 이유를 물어볼 데가 없었다. 그때 처음으로 학위가 벽으로 느껴졌다."},
+    {year:2021, age:25, title:"번아웃, 6개월 공백", desc:"집에서 아무것도 안 했다. 부모님은 아무 말도 안 하셨는데 그 침묵이 제일 힘들었다."},
+    {year:2022, age:26, title:"수능을 다시 보다", desc:"스물여섯에 학원에 앉았다. 자퇴할 때보다 이 결정이 백배 더 어려웠다."},
+    {year:2026, age:30, title:"졸업 후 공기업 입사", desc:"결국 돌아왔다. 8년이 걸렸다."}
+  ],
+  parentWords:"“나중에 후회한다. 지금은 몰라도 서른 되면 안다.” 아버지가 자퇴할 때 하신 말이다. 어머니는 “네가 뭘 안다고 인생을 걸어”라고 하셨다.",
+  howItWent:"못 넘겼다. 그게 솔직한 답이다. 자퇴하고 3년은 내가 이겼다고 생각했는데 4년차에 무너졌다. 다시 대학에 가겠다고 말씀드린 날 아버지가 “거봐라”라고 안 하시고 “늦지 않았다”고만 하신 게 오히려 더 아팠다. 부모님이 옳았다기보다는, 내가 준비 없이 뛰어내린 게 문제였다.",
+  parentNow:"두 분은 지금 내 일을 자랑스러워하신다. 다만 그 8년 얘기는 서로 안 꺼낸다. 어머니가 가끔 “그때 우리가 더 도와줬어야 했는데”라고 하시는데, 나는 아직 그 말에 뭐라고 답해야 할지 모르겠다.",
+  regret:{level:"많이 있음", text:"자퇴 자체를 후회한다. 개발이 싫었던 게 아니라 준비 없이 나온 게 문제였다. 실력을 쌓을 환경도, 물어볼 선배도 없는 상태로 3년을 태웠다. 자퇴를 고민하는 사람에게 나는 말리지 않는다. 다만 “나갈 곳이 정해져 있냐”고는 꼭 묻는다. 나는 정해진 게 없었다."}
+},
+{
+  id:"p08", name:"이수아", age:27, currentJob:"프론트엔드 개발자",
+  routeSummary:"교대 자퇴 → 부트캠프 → 스타트업 프론트엔드",
+  routeTags:["대학자퇴","자퇴","교대","교사","개발자","프론트엔드","안정성"],
+  timeline:[
+    {year:2018, age:19, title:"교대 입학", desc:"집안에서 제일 큰 경사였다. 할머니가 우셨다."},
+    {year:2019, age:20, title:"교생 실습 후 확신이 흔들리다", desc:"아이들이 싫은 게 아니라 내가 그 교실 앞에 40년 서 있는 그림이 안 그려졌다."},
+    {year:2020, age:21, title:"휴학하고 코딩 학원", desc:"부모님께는 “임용 준비 잠깐 미루는 것”이라고 말했다. 이 거짓말이 나중에 제일 큰 문제가 됐다."},
+    {year:2021, age:22, title:"자퇴", desc:"집안 전체가 뒤집혔다. 명절에 3년 동안 안 갔다."},
+    {year:2022, age:23, title:"첫 회사 입사", desc:"연봉은 교사 초임보다 낮았다. 그래도 매일 아침이 안 무서웠다."},
+    {year:2026, age:27, title:"4년차", desc:"지금은 교사 친구들보다 많이 번다. 그게 중요한 건 아니라는 것도 안다."}
+  ],
+  parentWords:"“교대를 나와? 그 자리에 들어가고 싶어서 재수 삼수 하는 애들이 몇인 줄 알아?” 어머니는 이 말을 하시면서 우셨다. 아버지는 “네가 지금 뭘 버리는지 모른다”고, 딱 한 문장만 하고 방에 들어가셨다.",
+  howItWent:"제일 안 좋은 방법으로 넘겼다. 휴학을 거짓말로 시작해서 자퇴를 통보로 끝냈다. 부모님이 반대한 진짜 이유는 안정성이었는데, 나는 그걸 “나를 못 믿는다”로 받아들이고 3년을 등지고 살았다. 화해는 스물다섯에 내가 아파서 병원에 실려 갔을 때 시작됐다. 그 3년이 없었으면 지금이 훨씬 나았을 거다.",
+  parentNow:"어머니는 이제 내 일을 “컴퓨터로 화면 만드는 일”이라고 설명하고 다니신다. 아버지는 여전히 안정성 얘기를 하시지만 예전만큼은 아니다. 작년에 아버지가 “교사였으면 지금 더 힘들었을 수도 있겠다”고 하셨는데 그 말이 사과라는 걸 안다.",
+  regret:{level:"일부 있음", text:"개발자가 된 건 후회 안 한다. 하지만 교대를 자퇴한 것 자체는 가끔 흔들린다. 친구들이 방학에 여행 가는 걸 볼 때, 서른 넘어서도 이직을 걱정해야 한다는 걸 알 때. 무엇보다 부모님과 3년을 잃은 건 명백한 손해였다. 그건 자퇴의 대가가 아니라 내가 거짓말로 시작한 대가였다."}
+},
+
+/* ───────── ③ 예체능 진로 ───────── */
+{
+  id:"p09", name:"권시현", age:29, currentJob:"세션 기타리스트 겸 실용음악 강사",
+  routeSummary:"실용음악과 → 밴드 활동 → 세션 연주 + 레슨",
+  routeTags:["예체능","음악","실용음악","기타","밴드","프리랜서","수입불안정"],
+  timeline:[
+    {year:2015, age:18, title:"실용음악 입시 시작", desc:"고3 여름에 처음 학원에 갔다. 남들보다 3년 늦은 시작이었다."},
+    {year:2017, age:20, title:"삼수 끝에 합격", desc:"두 번 떨어지는 동안 부모님이 학원비를 내주셨다. 그게 지지가 아니라 마지막 기회라는 뜻이었다는 걸 나중에 알았다."},
+    {year:2019, age:22, title:"밴드 결성, 첫 공연", desc:"관객 열두 명. 그중 여덟이 지인이었다."},
+    {year:2021, age:24, title:"밴드 해체", desc:"돈 때문이었다. 음악 때문에 싸운 게 아니라 다들 생활이 안 됐다."},
+    {year:2022, age:25, title:"레슨을 시작하다", desc:"연주만으로 못 먹고산다는 걸 인정하는 데 3년이 걸렸다."},
+    {year:2024, age:27, title:"세션 일이 들어오기 시작", desc:"녹음 크레딧에 내 이름이 올라갔다. 부모님께 그 앨범을 보내드렸다."},
+    {year:2026, age:29, title:"레슨 7 : 연주 3", desc:"수입의 70%는 레슨이다. 나머지 30%가 내가 음악을 계속하는 이유다."}
+  ],
+  parentWords:"“기타 쳐서 밥 먹고 살 수 있어? 취미로 하면 되잖아.” 아버지가 3년 동안 하신 말이다. 어머니는 “네 사촌형도 밴드 하다가 결국 회사 갔다”고 하셨다.",
+  howItWent:"완전히 넘긴 적이 없다. 대신 방식을 바꿨다. 스물다섯에 레슨을 시작하면서 매달 수입을 엑셀로 정리해서 보여드렸다. 부모님이 무서워한 건 음악이 아니라 “수입이 0인 달”이었다. 그 달을 없애고 나니까 대화가 가능해졌다. 좋아하는 일을 지키려고 안 좋아하는 일을 절반 하기로 한 건 타협이지 패배는 아니라고 생각한다.",
+  parentNow:"아버지는 이제 내 공연에 오신다. 오셔서 맨 뒤에 앉아 계시다가 끝나면 먼저 가신다. 어머니는 아직도 “결혼은 어떻게 하려고”라고 하시는데, 반대는 형태만 바뀐 것 같다.",
+  regret:{level:"일부 있음", text:"음악을 택한 건 후회 없다. 삼수한 3년은 조금 후회한다. 그 시간에 실기 연습을 더 했으면 지금 연주로 먹고사는 비율이 높았을 거다. 그리고 솔직히 말하면, 서른을 앞두고 통장을 볼 때마다 마음이 흔들린다. 그 흔들림이 없다고 말하는 사람은 거짓말이다."}
+},
+{
+  id:"p10", name:"장예린", age:25, currentJob:"프리랜서 일러스트레이터",
+  routeSummary:"예고 → 미대 → 프리랜서 일러스트",
+  routeTags:["예체능","미술","미대","일러스트","프리랜서","예고"],
+  timeline:[
+    {year:2016, age:15, title:"예고 입시", desc:"중3 때 부모님 몰래 입시학원 상담을 받았다."},
+    {year:2018, age:17, title:"예고 진학", desc:"학비가 일반고의 세 배였다. 그 숫자가 3년 내내 마음에 걸렸다."},
+    {year:2020, age:19, title:"미대 입학", desc:"합격 발표 날 어머니가 “그래도 대학은 갔네”라고 하셨다."},
+    {year:2022, age:21, title:"첫 외주", desc:"20만 원짜리 표지 그림. 세금계산서를 처음 발행해 봤다."},
+    {year:2024, age:23, title:"졸업 후 취업 대신 프리랜서", desc:"회사에 갈 수도 있었는데 안 갔다. 이때 부모님과 두 번째 전쟁이 났다."},
+    {year:2026, age:25, title:"연 단위 계약 클라이언트 3곳", desc:"수입이 회사원 친구들 평균 정도 된다. 대신 매달 다르다."}
+  ],
+  parentWords:"“그림은 잘 그리는 애가 백 명이면 그중 하나만 먹고살아. 너는 그 하나가 아닐 수도 있잖아.” 아버지가 예고 원서 쓸 때 하신 말이다. 어머니는 “일반고 가서 미대 가면 되잖아. 왜 굳이 다 걸어”라고 하셨다.",
+  howItWent:"부모님이 반대한 건 재능이 아니라 확률이었다. 그래서 나도 확률로 답했다. 예고 3년 동안 받은 상, 대학 4년 동안 판 그림 수, 단가가 오른 기록을 다 남겨서 보여드렸다. 프리랜서를 선언할 때는 6개월치 생활비를 미리 모아 두고 통장을 보여드렸다. “안 되면 취업한다”는 문장이 있었기 때문에 두 분이 그나마 받아들이셨다.",
+  parentNow:"어머니는 내 그림이 들어간 책을 사서 지인들에게 나눠주신다. 아버지는 여전히 “4대 보험은 어떡하냐”고 물으신다. 예고 학비 얘기는 이제 아무도 안 한다.",
+  regret:{level:"없음", text:"후회는 없다. 예고를 안 갔으면 지금 실력이 안 나왔을 거라고 확신한다. 다만 부모님이 그 학비를 어떻게 마련하셨는지는 스물세 살에야 알았고, 그건 후회가 아니라 빚이라고 생각한다."}
+},
+{
+  id:"p11", name:"노강우", age:32, currentJob:"유소년 축구 코치",
+  routeSummary:"체고 → 프로 진출 실패 → 실업팀 → 지도자 전향",
+  routeTags:["예체능","체육","축구","운동","체고","프로실패","지도자"],
+  timeline:[
+    {year:2009, age:15, title:"축구부 입단", desc:"초등학교 4학년부터 공을 찼다. 다른 선택지를 생각해 본 적이 없었다."},
+    {year:2012, age:18, title:"체고 3학년, 대학 진학 실패", desc:"부상 시기가 겹쳤다. 그 6개월이 인생을 바꿨다."},
+    {year:2014, age:20, title:"실업팀 입단", desc:"프로는 아니었다. 월급은 180만 원이었다."},
+    {year:2018, age:24, title:"방출", desc:"스물넷에 은퇴했다. 학교를 15년 다녔는데 남은 게 없었다."},
+    {year:2019, age:25, title:"지도자 자격 취득", desc:"공을 차는 것 말고 처음으로 다른 걸 배웠다."},
+    {year:2021, age:27, title:"유소년 클럽 코치", desc:"아이들에게 “안 될 수도 있다”는 말을 어떻게 해야 할지 매년 고민한다."},
+    {year:2026, age:32, title:"클럽 총괄 코치", desc:"내가 못 간 길을 아이들에게 열어주는 일을 한다."}
+  ],
+  parentWords:"“운동은 딱 고등학교까지만 하자. 대학은 공부로 가야지.” 어머니는 내가 중학생일 때부터 그러셨다. 아버지는 반대로 “남자가 한번 시작했으면 끝을 봐야지”라고 하셨는데, 지금 생각하면 그 두 말 사이에서 내가 제일 힘들었다.",
+  howItWent:"넘겼다기보다 시간이 지나갔다. 스물넷에 방출됐을 때 집에 돌아가서 두 달을 누워 있었다. 어머니가 “그러게 내가 뭐랬어”라고 안 하신 게 유일한 구원이었다. 지도자 길을 찾은 건 순전히 고등학교 은사님 덕분이었다. 부모님은 나를 말릴 힘도, 다른 길을 알려줄 정보도 없으셨던 것 같다.",
+  parentNow:"어머니는 이제 내가 가르치는 아이들 경기를 보러 오신다. 아버지는 “네가 선수 못 된 게 아니라 코치가 된 거다”라고 하시는데, 그 말을 몇 년 동안 준비하신 것 같았다.",
+  regret:{level:"일부 있음", text:"축구를 한 건 후회 안 한다. 하지만 열다섯부터 스물넷까지 축구 말고 아무것도 준비 안 한 건 후회한다. 은퇴하고 나서 이력서에 쓸 게 한 줄도 없었다. 지금 아이들한테는 꼭 “공부도 놓지 마라”고 한다. 꼰대 같지만 그게 내가 제일 비싸게 배운 거다."}
+},
+{
+  id:"p12", name:"서다인", age:28, currentJob:"뮤지컬 배우 (앙상블)",
+  routeSummary:"예고 뮤지컬과 → 극단 → 중소극장 → 대극장 앙상블",
+  routeTags:["예체능","뮤지컬","연기","배우","무대","오디션"],
+  timeline:[
+    {year:2015, age:17, title:"예고 뮤지컬과", desc:"노래는 중간, 춤은 하위였다. 연기 하나로 버텼다."},
+    {year:2018, age:20, title:"대학 대신 극단", desc:"입시에 두 번 떨어지고 극단 오디션에 붙었다. 이 선택으로 집에서 1년 반 동안 냉전이 있었다."},
+    {year:2020, age:22, title:"공연이 전부 취소되다", desc:"코로나로 무대가 사라졌다. 물류센터에서 야간 일을 했다."},
+    {year:2022, age:24, title:"중소극장 첫 배역", desc:"이름 있는 역할이었다. 부모님이 처음으로 공연을 보러 오셨다."},
+    {year:2024, age:26, title:"대극장 앙상블 합격", desc:"1,200석 무대에 섰다. 이름은 팸플릿 뒤쪽에 있었다."},
+    {year:2026, age:28, title:"연 3작품", desc:"주연은 아직이다. 그래도 이 일로만 먹고산다."}
+  ],
+  parentWords:"“배우는 얼굴 알려지기 전까지 다 굶어. 그거 해서 밥 먹고 살 수 있어?” 아버지는 극단에 들어간다고 했을 때 “차라리 대학이라도 가라”고 하셨다. 어머니는 “엄마 친구 딸은 교대 갔다더라”를 3년 반복하셨다.",
+  howItWent:"공연에 초대했다. 말로 설명하는 걸 포기하고 표를 보냈다. 2년 동안 안 오시다가 중소극장 공연에 처음 오셨는데, 그날 아버지가 커튼콜 때 서서 박수를 치셨다. 집에 와서 아무 말씀도 안 하셨지만 그 뒤로 반대라는 말을 안 쓰셨다. 부모님은 내 직업을 이해한 게 아니라 무대 위의 나를 처음 본 것뿐이었다.",
+  parentNow:"어머니는 이제 공연 일정표를 냉장고에 붙여 두신다. 아버지는 지인들에게 표를 나눠주시다가 내가 “그만 좀 사세요”라고 말릴 정도다. 지금은 두 분이 내 오디션 결과를 나보다 더 초조하게 기다리신다.",
+  regret:{level:"없음", text:"후회 없다. 스물두 살에 물류센터에서 밤을 새울 때도 그만두겠다는 생각은 안 했다. 다만 그때 “이 일을 그만두면 뭘 할 수 있나”를 한 번도 생각 안 해 본 건 위험했다고 지금은 생각한다."}
+},
+
+/* ───────── ④ 재수 대신 바로 취업 ───────── */
+{
+  id:"p13", name:"임현우", age:26, currentJob:"물류센터 운영관리자",
+  routeSummary:"수능 실패 → 재수 거부 → 물류 현장직 → 관리자",
+  routeTags:["재수거부","바로취업","물류","현장직","승진","고졸"],
+  timeline:[
+    {year:2018, age:18, title:"수능, 원하던 데 다 떨어짐", desc:"부모님은 이미 재수학원 상담까지 받아 두셨다."},
+    {year:2019, age:19, title:"재수 대신 물류센터 계약직", desc:"1년만 벌고 생각하겠다고 했다. 부모님은 그 말을 도망이라고 들으셨다."},
+    {year:2020, age:20, title:"정규직 전환", desc:"현장에서 제일 어렸고 제일 오래 남았다."},
+    {year:2022, age:22, title:"파트 리더", desc:"스물둘에 나보다 스무 살 많은 분들에게 지시를 하게 됐다. 이때가 제일 힘들었다."},
+    {year:2024, age:24, title:"운영관리자 승진", desc:"동갑 친구들이 막 졸업할 때 나는 5년차였다."},
+    {year:2026, age:26, title:"센터 운영 파트 총괄", desc:"연봉이 친구들 초임의 1.6배다. 그 얘기는 굳이 안 한다."}
+  ],
+  parentWords:"“1년만 참으면 되는데 왜 그걸 못 참아. 나중에 후회한다.” 어머니가 재수학원 등록금을 이미 준비해 두셨었다. 아버지는 “네가 뭘 안다고. 스무 살에 정하는 게 아니야”라고 하셨다.",
+  howItWent:"1년만 해 보고 안 되면 재수하겠다고 약속했다. 그 1년이 지났을 때 나는 정규직이 됐고, 부모님은 약속을 다시 꺼내지 못하셨다. 매달 집에 30만 원씩 넣었는데 돈이 필요해서가 아니라 내가 놀고 있지 않다는 신호였다. 재수 안 한 이유를 “공부가 싫어서”라고 말한 적은 한 번도 없다. 실제로도 그게 이유가 아니었다.",
+  parentNow:"아버지는 이제 “현우가 회사에서 팀을 맡았다”고 말씀하신다. 어머니는 아직도 사이버대 얘기를 하시는데, 이제는 강요가 아니라 제안이다. 두 분 다 재수 얘기는 안 하신다.",
+  regret:{level:"없음", text:"후회 없다. 재수했으면 아마 중위권 대학에 갔을 거고, 지금보다 4년 늦게 사회에 나왔을 거다. 다만 스무 살 때 아무도 나한테 이 길에 대해 알려주지 않아서, 전부 몸으로 부딪혀 배운 건 좀 비쌌다."}
+},
+{
+  id:"p14", name:"차보경", age:30, currentJob:"미용실 원장",
+  routeSummary:"고3 자퇴 직전 → 미용 자격증 → 스태프 → 디자이너 → 개원",
+  routeTags:["재수거부","바로취업","미용","기술직","자영업","창업"],
+  timeline:[
+    {year:2013, age:17, title:"학교를 그만두고 싶었던 해", desc:"성적표를 보고 어머니가 우셨다. 나는 그때 미용실 아르바이트를 하고 있었다."},
+    {year:2014, age:18, title:"졸업만 하고 미용학원", desc:"자퇴는 안 했다. 그게 부모님과 한 유일한 타협이었다."},
+    {year:2015, age:19, title:"스태프 시작, 월급 130만 원", desc:"3년 동안 손이 트고 갈라졌다. 그만둔 동기가 열에 아홉이었다."},
+    {year:2019, age:23, title:"디자이너 승급", desc:"처음으로 내 이름으로 예약이 잡혔다."},
+    {year:2022, age:26, title:"단골 300명", desc:"이때 처음으로 부모님보다 많이 벌었다."},
+    {year:2024, age:28, title:"개원", desc:"대출을 받았다. 아버지가 보증을 서 주셨다."},
+    {year:2026, age:30, title:"직원 4명", desc:"어머니가 매주 머리를 하러 오신다."}
+  ],
+  parentWords:"“여자가 손에 물 묻히는 일을 왜 해. 옆집 딸은 간호학과 갔다더라.” 어머니는 미용학원 등록을 3개월 미루게 하셨다. 아버지는 “그거 언제까지 할 수 있는데. 마흔 넘어서도 하냐”고 물으셨다.",
+  howItWent:"부모님이 걱정한 건 이 일의 수명이었다. 그래서 나도 수명으로 답했다. 스태프 3년차에 “서른에 내 가게를 열겠다”는 계획을 종이에 써서 드렸고, 매년 그 계획의 어디까지 왔는지 보고했다. 계획대로 안 된 해도 있었는데 그것도 그대로 말씀드렸다. 결국 아버지가 개원 보증을 서 주신 건 내가 7년 동안 한 번도 말을 바꾸지 않았기 때문이라고 생각한다.",
+  parentNow:"어머니는 이제 손님들한테 “우리 딸 가게”라고 자랑하신다. 아버지는 가게 앞 화분을 계절마다 바꿔 주신다. 간호학과 얘기는 10년째 안 나온다.",
+  regret:{level:"없음", text:"후회 없다. 다만 스태프 3년 동안 최저임금도 못 받고 일한 건 지금 후배들에게는 절대 권하지 않는다. 그건 미용 일의 문제가 아니라 그 시절 업계의 문제였다."}
+},
+{
+  id:"p15", name:"황인성", age:29, currentJob:"자동차 영업사원 (3번째 직장)",
+  routeSummary:"재수 포기 → 여러 직장 이동 → 영업직 정착",
+  routeTags:["재수거부","바로취업","영업","이직","방황","후회"],
+  timeline:[
+    {year:2015, age:18, title:"수능 이후", desc:"성적이 애매했다. 재수는 죽어도 싫었다."},
+    {year:2016, age:19, title:"첫 직장, 6개월", desc:"작은 유통회사. 뭘 배우는지 모르는 채로 다녔다."},
+    {year:2017, age:20, title:"두 번째 직장, 8개월", desc:"이때부터 이력서에 공백이 생기기 시작했다."},
+    {year:2019, age:22, title:"군 복무", desc:"입대해서야 처음으로 내가 뭘 놓쳤는지 생각했다."},
+    {year:2021, age:24, title:"세 번째 직장, 영업", desc:"학벌을 안 보는 곳을 찾다가 왔다. 그래도 여기서 처음으로 1년을 넘겼다."},
+    {year:2023, age:26, title:"실적 상위권", desc:"내가 잘하는 게 있다는 걸 스물여섯에 알았다."},
+    {year:2026, age:29, title:"5년차, 팀 내 2위", desc:"지금은 괜찮다. 여기까지 오는 데 걸린 시간이 아깝다."}
+  ],
+  parentWords:"“1년만 더 하면 되는데. 남들 다 하는 재수를 왜 못 해.” 아버지는 이 말을 반년 동안 하셨다. 어머니는 “지금 안 하면 서른에 후회한다”고 하셨는데, 정확히 맞으셨다.",
+  howItWent:"제대로 넘긴 적이 없다. 재수가 싫었던 거지 다른 계획이 있었던 게 아니었다. 부모님한테는 “일하면서 찾겠다”고 했는데, 사실 아무것도 안 찾고 있었다. 스물넷에 영업 일을 시작하고 나서야 대화가 정상으로 돌아왔다. 부모님이 틀린 게 아니라 내가 대안 없이 반대만 했다는 게 진짜 문제였다.",
+  parentNow:"두 분은 이제 아무 말도 안 하신다. 그게 인정인지 포기인지 아직 모르겠다. 어머니가 작년에 “그래도 네가 자리를 잡아서 다행이다”라고 하신 게 전부다.",
+  regret:{level:"많이 있음", text:"후회한다. 재수를 안 한 게 아니라, 재수 대신 뭘 할지 정하지 않은 걸 후회한다. 열아홉부터 스물넷까지 5년이 통째로 비어 있다. 그 5년에 자격증 하나, 기술 하나만 붙여뒀어도 지금이 훨씬 나았을 거다. 대학을 안 간 것 자체는 지금도 상관없다고 생각한다. 문제는 아무것도 안 간 거였다."}
+},
+{
+  id:"p16", name:"고은지", age:27, currentJob:"객실 승무원",
+  routeSummary:"수능 실패 → 재수 대신 전문대 항공과 → 승무원",
+  routeTags:["재수거부","전문대","승무원","항공","서비스직","학벌"],
+  timeline:[
+    {year:2017, age:18, title:"수능, 목표보다 낮은 점수", desc:"부모님은 당연히 재수라고 생각하셨다."},
+    {year:2018, age:19, title:"전문대 항공서비스과", desc:"“2년제를 왜 가냐”는 말을 원서 접수일까지 들었다."},
+    {year:2020, age:21, title:"졸업, 코로나로 채용 중단", desc:"전 항공사가 채용을 멈췄다. 이때가 제일 무서웠다."},
+    {year:2021, age:22, title:"공항 지상직으로 시작", desc:"승무원이 아니라 카운터였다. 그래도 활주로가 보이는 자리였다."},
+    {year:2023, age:24, title:"객실 승무원 합격", desc:"3년 만에 원하던 자리에 갔다."},
+    {year:2026, age:27, title:"국제선 4년차", desc:"작년에 부모님을 모시고 처음으로 해외에 갔다."}
+  ],
+  parentWords:"“2년제 나와서 되겠니. 요즘은 승무원도 다 4년제야.” 어머니가 하신 말이다. 아버지는 “재수해서 4년제 가고 그다음에 준비해도 늦지 않다. 남들 다 그렇게 해”라고 하셨다.",
+  howItWent:"기다리게 하는 게 제일 어려웠다. 졸업하고 채용이 멈춘 2년 동안 부모님이 하루가 멀다 하고 “거봐라”를 반복하셨다. 그때 나는 지상직을 하면서 어학 점수를 올렸고, 그 점수를 매번 보여드렸다. 결국 부모님을 설득한 건 합격이 아니라, 안 될 때도 내가 뭔가를 계속하고 있었다는 사실이었던 것 같다.",
+  parentNow:"어머니는 내 비행 스케줄을 달력에 옮겨 적으신다. 아버지는 “딸이 파리 갔다”는 말을 좋아하신다. 전문대 얘기는 이제 아무도 안 한다.",
+  regret:{level:"일부 있음", text:"재수 안 한 건 후회 없다. 다만 이 직업이 몸을 오래 쓰는 일이라는 걸 스물일곱에 체감하고 있다. 서른다섯 이후를 생각하면 지금부터 다른 걸 준비해야 하는데, 그 준비를 스무 살에 시작했으면 좋았겠다는 생각은 한다."}
+},
+
+/* ───────── ⑤ 문과 → 개발 전향 ───────── */
+{
+  id:"p17", name:"류지호", age:31, currentJob:"데이터 엔지니어",
+  routeSummary:"국문과 → 출판사 편집자 → 개발 전향 → 데이터 엔지니어",
+  routeTags:["문과","전향","개발자","데이터","출판","늦은시작"],
+  timeline:[
+    {year:2013, age:18, title:"국문과 입학", desc:"책이 좋아서 갔다. 그건 지금도 후회 안 한다."},
+    {year:2018, age:23, title:"출판사 입사", desc:"연봉 2,200. 좋아하는 일이 생활을 못 만든다는 걸 처음 알았다."},
+    {year:2020, age:25, title:"엑셀 자동화에 빠지다", desc:"반복 업무를 줄이려고 시작했는데 그게 제일 재미있었다."},
+    {year:2021, age:26, title:"퇴사, 6개월 독학", desc:"부모님께는 “대학원 준비”라고 둘러댔다. 이게 두 달 만에 들통났다."},
+    {year:2022, age:27, title:"첫 개발 취업", desc:"스물일곱 신입. 팀에서 제일 나이가 많았다."},
+    {year:2024, age:29, title:"데이터 직군으로 이동", desc:"문서를 잘 쓴다는 게 여기서 무기가 됐다."},
+    {year:2026, age:31, title:"5년차", desc:"국문과에서 배운 게 쓸모없었던 적은 한 번도 없다."}
+  ],
+  parentWords:"“서른 다 돼서 무슨 새로 시작이야. 지금 회사 그냥 다녀.” 어머니가 퇴사 소식에 하신 말이다. 아버지는 “문과가 코딩을 어떻게 해. 남들 다 스무 살부터 하는 걸 네가 지금 따라잡을 수 있냐”고 하셨다.",
+  howItWent:"6개월이라는 기한과 통장 잔고를 함께 보여드렸다. “이 돈이 떨어질 때까지 안 되면 다시 취업하겠다”고 말씀드렸다. 부모님이 무서워하신 건 전향 자체가 아니라 나이였다. 스물일곱에 신입으로 들어간 회사에서 첫 명함을 받아 드린 날, 아버지가 “늦은 게 아니었네”라고 하셨다. 나이 얘기는 그날 이후로 안 나온다.",
+  parentNow:"아버지는 이제 “요즘 AI가 어쩌고” 하는 기사를 나한테 보내신다. 어머니는 내가 출판사 다닐 때보다 표정이 밝아졌다고 하신다. 두 분 다 그 6개월을 이제는 “준비 기간”이라고 부르신다.",
+  regret:{level:"없음", text:"후회 없다. 국문과도, 출판사 3년도 다 지금 일에 쓰인다. 굳이 아쉬운 건 퇴사를 대학원 준비라고 거짓말한 두 달이다. 그 거짓말 때문에 진짜 설득해야 할 때 신뢰가 깎여 있었다."}
+},
+{
+  id:"p18", name:"신아름", age:28, currentJob:"QA 엔지니어",
+  routeSummary:"행정학과 → 공기업 준비 2년 → QA로 전향",
+  routeTags:["문과","전향","공무원준비","공기업","QA","개발","시험포기"],
+  timeline:[
+    {year:2016, age:18, title:"행정학과 입학", desc:"부모님이 원하신 과였다. 나도 딱히 다른 생각은 없었다."},
+    {year:2020, age:22, title:"졸업 후 공기업 준비", desc:"노량진은 아니었지만 생활은 똑같았다. 하루 10시간 독서실."},
+    {year:2021, age:23, title:"2년차, 두 번째 탈락", desc:"필기는 붙고 면접에서 떨어졌다. 이때 몸이 먼저 망가졌다."},
+    {year:2022, age:24, title:"시험을 접다", desc:"부모님께 말씀드리는 데 3개월이 걸렸다."},
+    {year:2023, age:25, title:"QA 부트캠프", desc:"개발은 못 해도 테스트는 할 수 있겠다 싶었다. 실제로 잘 맞았다."},
+    {year:2024, age:26, title:"IT 회사 QA 입사", desc:"처음 받은 월급이 공부하던 2년의 생활비보다 많았다."},
+    {year:2026, age:28, title:"3년차, 자동화 테스트 담당", desc:"지금은 코드도 쓴다."}
+  ],
+  parentWords:"“2년을 했는데 여기서 그만두면 그 2년은 뭐가 되니.” 어머니는 이 말을 제일 많이 하셨다. 아버지는 “한 번만 더 해 봐라. 남들도 3년, 4년씩 한다”고 하셨다.",
+  howItWent:"“이미 쓴 시간”과 “앞으로 쓸 시간”을 분리해서 말씀드렸다. 2년이 아까운 건 맞지만 그 2년 때문에 3년을 더 쓰는 게 맞냐고 물었다. 그때 어머니가 아무 말도 못 하셨다. 그리고 6개월 안에 취업하겠다는 기한을 걸었다. 결과적으로 5개월 만에 됐고, 그 이후로는 두 분이 시험 얘기를 꺼내지 않으신다.",
+  parentNow:"어머니는 아직도 가끔 “공기업이었으면 정년까지 다녔을 텐데”라고 하신다. 아버지는 내가 야근을 하면 걱정하시고, 안 하면 안심하신다. 반대는 끝났는데 걱정은 안 끝난 것 같다.",
+  regret:{level:"없음", text:"그만둔 건 후회 없다. 오히려 2년 만에 그만둔 걸 잘했다고 생각한다. 주변에 5년, 6년 하다가 나온 사람들을 보면 그 차이가 크다. 다만 그 2년 동안 내가 진짜 뭘 하고 싶은지 한 번도 안 물어본 건 아쉽다."}
+},
+{
+  id:"p19", name:"조민서", age:33, currentJob:"백엔드 개발 팀장",
+  routeSummary:"사학과 → 일반 사무직 → 서른에 개발 전향 → 팀장",
+  routeTags:["문과","전향","개발자","백엔드","늦은시작","서른","이직"],
+  timeline:[
+    {year:2011, age:18, title:"사학과 입학", desc:"좋아하는 걸 배웠다. 취업 얘기는 4학년 때 처음 했다."},
+    {year:2016, age:23, title:"중소기업 사무직", desc:"엑셀과 전화. 5년 뒤의 내 모습이 선배 자리에 앉아 있었고 그게 무서웠다."},
+    {year:2021, age:28, title:"퇴근 후 공부 시작", desc:"1년 동안 아무한테도 말 안 했다. 실패했을 때 설명하기 싫어서였다."},
+    {year:2022, age:29, title:"퇴사하고 6개월 몰입", desc:"이때 부모님과 제일 크게 싸웠다. 서른이라는 숫자 때문이었다."},
+    {year:2023, age:30, title:"서른에 신입 개발자", desc:"연봉이 전 직장보다 낮았다. 1년만 참자고 생각했다."},
+    {year:2025, age:32, title:"두 번째 회사, 시니어", desc:"사무직 5년의 경험이 요구사항 정리에서 그대로 먹혔다."},
+    {year:2026, age:33, title:"팀장", desc:"3년 만에 팀을 맡았다. 나이가 늦은 게 아니라 경로가 달랐던 거였다."}
+  ],
+  parentWords:"“서른에 신입으로 들어간다는 게 말이 되니. 남들은 그 나이에 결혼하고 집 산다.” 어머니는 우시면서 그러셨다. 아버지는 “네가 뭘 안다고 안정된 직장을 버려. 회사가 우스워 보이냐”고 하셨다.",
+  howItWent:"1년을 몰래 준비한 게 결과적으로 제일 큰 무기였다. 말씀드릴 때 이미 만든 프로젝트 세 개와 합격한 코딩 테스트 결과가 있었다. “해 보겠다”가 아니라 “여기까지 왔다”로 시작하니까 대화의 성격이 달라졌다. 그래도 반년은 냉랭했다. 첫 회사에서 승진했다는 소식을 전한 날에야 아버지가 “고생했다”고 하셨다.",
+  parentNow:"아버지는 요즘 친구분들께 “아들이 IT 회사 팀장”이라고 하신다. 어머니는 내가 서른셋에 아직 결혼을 안 한 걸로 화제를 옮기셨다. 반대할 대상이 바뀌었을 뿐인 것 같기도 하다.",
+  regret:{level:"없음", text:"후회 없다. 오히려 스물여덟에 시작한 게 딱 맞았다고 생각한다. 스무 살에 개발을 했으면 지금처럼 사람들과 일하는 걸 잘하지 못했을 거다. 사무직 5년이 낭비였다고 생각한 적은 한 번도 없다."}
+},
+{
+  id:"p20", name:"백승훈", age:26, currentJob:"프론트엔드 개발자 (1년차)",
+  routeSummary:"경영학과 → 부트캠프 → 취업 실패 9개월 → 첫 취업",
+  routeTags:["문과","전향","개발자","부트캠프","취업난","프론트엔드","불안"],
+  timeline:[
+    {year:2019, age:19, title:"경영학과 입학", desc:"무난한 선택이었다."},
+    {year:2023, age:23, title:"졸업, 취업 실패", desc:"상반기 공채 40곳에서 다 떨어졌다."},
+    {year:2024, age:24, title:"부트캠프 등록", desc:"개발자가 하고 싶어서가 아니라 문이 열려 있는 쪽으로 갔다. 이건 인정해야 한다."},
+    {year:2024, age:24, title:"수료, 그리고 9개월", desc:"이력서를 120곳에 냈다. 면접은 일곱 번 봤다."},
+    {year:2025, age:25, title:"작은 회사 입사", desc:"연봉 3,000. 개발자 세 명."},
+    {year:2026, age:26, title:"1년차", desc:"아직 잘하는지 모르겠다. 그래도 매일 뭔가 배우고는 있다."}
+  ],
+  parentWords:"“요즘 개발자 다 짤린다는데 왜 지금 그걸 하니.” 어머니는 뉴스를 보시면서 그러셨다. 아버지는 “남들 다 가는 데는 이유가 있어. 그냥 공기업 준비해라. 네가 뭘 안다고 유행 따라가”라고 하셨다.",
+  howItWent:"아직 완전히 안 넘겼다. 9개월 동안 떨어질 때마다 부모님이 “거봐라”를 하지는 않으셨는데, 그 침묵이 더 무거웠다. 매주 지원한 회사 수와 결과를 엑셀에 정리해서 보여드린 게 유일하게 한 일이었다. 취업하고 나서 반대는 멈췄지만, 두 분은 여전히 이 일이 얼마나 갈지를 걱정하신다. 나도 사실 잘 모른다.",
+  parentNow:"어머니는 이제 “회사는 괜찮니”라고만 물으신다. 아버지는 여전히 공기업 채용 공고를 캡처해서 보내신다. 반대가 끝난 게 아니라 유예된 느낌이다.",
+  regret:{level:"일부 있음", text:"전향 자체는 후회 안 한다. 다만 “개발이 좋아서”가 아니라 “문이 열려 있어서” 시작한 건 지금 대가를 치르고 있다. 나보다 훨씬 좋아하는 사람들 사이에서 버티는 게 매일 힘들다. 9개월의 공백도 아직 이력서에 남아 있다. 그래도 다시 돌아가도 부트캠프는 갈 것 같다. 대신 그전에 6개월쯤 혼자 만들어 보고 갔을 거다."}
+},
+
+/* ───────── ⑥ 공무원 준비 접고 창업 ───────── */
+{
+  id:"p21", name:"우재민", age:32, currentJob:"반찬 구독 서비스 대표",
+  routeSummary:"9급 준비 2년 → 반찬가게 → 구독 서비스 창업",
+  routeTags:["공무원준비","공시","창업","자영업","식품","시험포기"],
+  timeline:[
+    {year:2016, age:22, title:"9급 공무원 준비 시작", desc:"군 제대하고 바로 노량진에 갔다. 아버지가 원하시던 그림이었다."},
+    {year:2018, age:24, title:"2년, 두 번 낙방", desc:"두 번째 발표 날 어머니가 “한 번만 더”라고 하셨다."},
+    {year:2019, age:25, title:"어머니 반찬가게를 돕다", desc:"쉰다는 명목으로 갔는데 그게 지금 일의 시작이었다."},
+    {year:2020, age:26, title:"온라인 주문을 만들다", desc:"동네 손님만 받던 가게에 배송을 붙였다. 첫 달 주문 12건."},
+    {year:2022, age:28, title:"법인 설립", desc:"어머니 가게에서 독립했다. 이때 아버지와 반년을 안 봤다."},
+    {year:2024, age:30, title:"월 구독 1,400가구", desc:"직원 아홉 명이 됐다."},
+    {year:2026, age:32, title:"6년차", desc:"작년에 아버지가 우리 회사 김치를 지인들에게 돌리셨다."}
+  ],
+  parentWords:"“공무원 시험이 얼마나 좋은 건데. 남들 다 가는 데는 이유가 있어.” 아버지는 3년째 그 말을 하셨다. “장사는 망하면 끝이야. 아버지가 그거 해 봐서 안다”고도 하셨는데, 사실 그 말이 제일 무서웠다.",
+  howItWent:"아버지가 반대하신 이유는 본인이 IMF 때 가게를 접어 보셨기 때문이었다. 그걸 알고 나서 설득 방식을 바꿨다. 매출이 아니라 리스크를 먼저 말씀드렸다. 대출은 얼마고, 최악의 경우 얼마를 잃고, 그때 나는 어디로 돌아가는지를 종이에 적어서 드렸다. 아버지는 그 종이를 한참 보시더니 “계획은 있네”라고만 하셨다. 그게 허락이었다.",
+  parentNow:"아버지는 요즘 우리 창고에 나와서 박스를 정리하신다. 시키지도 않았는데 오신다. 어머니는 “네가 내 가게보다 커졌다”고 하시면서 웃으신다. 공무원 얘기는 6년째 없다.",
+  regret:{level:"없음", text:"후회 없다. 다만 2년 동안 시험 준비한 걸 낭비라고 생각하진 않는다. 그때 배운 행정법이 사업자 등록하고 위생 규정 볼 때 실제로 도움이 됐다. 웃긴 얘기지만 진짜다."}
+},
+{
+  id:"p22", name:"심유나", age:30, currentJob:"중소기업 회계 담당 (창업 폐업 후)",
+  routeSummary:"9급 준비 3년 → 카페 창업 → 1년 8개월 만에 폐업 → 재취업",
+  routeTags:["공무원준비","공시","창업","폐업","실패","재취업","후회","빚"],
+  timeline:[
+    {year:2015, age:19, title:"대학 입학, 그리고 방황", desc:"전공이 안 맞았지만 그만둘 용기는 없었다."},
+    {year:2019, age:23, title:"공무원 준비 시작", desc:"부모님이 제일 좋아하신 1년이었다."},
+    {year:2021, age:25, title:"3년차, 세 번 낙방", desc:"점수는 매년 올랐는데 커트라인이 더 빨리 올랐다."},
+    {year:2022, age:26, title:"시험을 접고 카페를 열다", desc:"모아둔 돈 2,000만 원에 대출 5,000만 원. 부모님께는 사후 통보했다."},
+    {year:2023, age:27, title:"첫해 매출은 나쁘지 않았다", desc:"인건비를 빼면 내 몫이 최저임금 이하라는 걸 반년 뒤에 계산했다."},
+    {year:2024, age:28, title:"폐업", desc:"권리금을 못 받고 나왔다. 빚이 4,300만 원 남았다."},
+    {year:2025, age:29, title:"회계 자격증, 재취업", desc:"시험 준비할 때 공부하던 습관이 여기서 도움이 됐다."},
+    {year:2026, age:30, title:"직장 2년차, 빚 1,900만 원", desc:"3년 안에 다 갚는 게 목표다."}
+  ],
+  parentWords:"“그거 해서 밥 먹고 살 수 있어? 네가 뭘 안다고 장사를 해.” 아버지가 카페 계약서를 보고 하신 말이다. 어머니는 “한 번만 더 시험 보면 되잖아. 왜 하필 지금 그만두냐”고 하셨다.",
+  howItWent:"솔직히 말하면 안 넘겼다. 통보했고, 부딪혔고, 결국 부모님 말이 맞았다. 폐업하고 집에 들어간 날 아버지가 “거봐라”라고 안 하셨는데 나는 차라리 그 말을 듣고 싶었다. 지금 부모님과 관계는 오히려 그전보다 낫다. 실패한 다음에 도망 안 가고 빚 갚는 걸 두 분이 보셨기 때문인 것 같다.",
+  parentNow:"어머니는 매달 내 통장 잔고를 물으신다. 잔소리가 아니라 같이 세는 것에 가깝다. 아버지는 작년에 처음으로 “네가 그때 해 본 게 아주 헛일은 아니었다”고 하셨다. 그 말을 듣고 화장실에서 울었다.",
+  regret:{level:"많이 있음", text:"후회한다. 창업 자체보다 준비 없이 한 걸 후회한다. 사업계획서 한 장 안 쓰고 감으로 시작했다. 상권 분석도, 손익 계산도 열어 놓고 보니 다 틀려 있었다. 그리고 부모님께 통보한 걸 제일 후회한다. 반대를 들었으면 최소한 대출 규모는 줄였을 거다. 지금도 매달 이자를 낼 때마다 그 생각을 한다. 그래도 다시 취업한 걸 실패의 증거라고는 생각 안 한다."}
+},
+{
+  id:"p23", name:"강태호", age:34, currentJob:"세무회계 사무소 대표",
+  routeSummary:"세무직 공무원 준비 → 세무사 시험 전환 → 사무소 개업",
+  routeTags:["공무원준비","공시","세무사","전문직","창업","시험"],
+  timeline:[
+    {year:2013, age:21, title:"세무직 공무원 준비", desc:"안정적이라는 이유 하나였다."},
+    {year:2015, age:23, title:"2년 준비, 낙방", desc:"공부는 할 만했는데 이 일을 40년 하는 그림이 안 그려졌다."},
+    {year:2016, age:24, title:"세무사 시험으로 전환", desc:"부모님은 “더 어려운 걸 왜 하냐”고 하셨다."},
+    {year:2019, age:27, title:"4년 만에 합격", desc:"세 번째 시도였다. 이때 가족 모두가 울었다."},
+    {year:2021, age:29, title:"회계법인 근무", desc:"실무를 배웠다. 시험보다 어려웠다."},
+    {year:2024, age:32, title:"개업", desc:"보증금은 대출, 책상은 중고였다."},
+    {year:2026, age:34, title:"고객사 90곳", desc:"직원 셋과 일한다."}
+  ],
+  parentWords:"“공무원이 얼마나 좋은데. 왜 더 어려운 길로 가려고 해. 떨어지면 어쩔 건데.” 어머니가 매년 하신 말이다. 아버지는 “네 나이 서른 되기 전에 뭐라도 붙어야 한다”고 압박하셨다.",
+  howItWent:"기한을 걸었다. “서른까지만 하고 안 되면 아무 회사나 가겠다”고 말씀드렸다. 그 말을 하고 나니까 나도 정신이 들었고 부모님도 끝이 있다는 걸 아셔서 견디셨다. 4년 동안 매년 성적표를 그대로 보여드렸다. 떨어진 해에도 몇 점 차이인지 다 말씀드렸다. 숨기기 시작하면 그때부터 반대가 심해진다는 걸 그때 배웠다.",
+  parentNow:"아버지는 사무실 개업식 때 한복을 입고 오셨다. 어머니는 동네 사람들 세금 상담을 나한테 다 연결해 주신다. 두 분이 이제는 “그때 우리가 말렸어도 너는 했을 거다”라고 하신다.",
+  regret:{level:"없음", text:"후회 없다. 다만 4년 동안 부모님이 나 때문에 얼마나 조마조마하셨는지는 합격하고 나서야 알았다. 시험을 준비하는 사람은 자기 불안만 보이고 옆 사람 불안은 안 보인다."}
+},
+
+/* ───────── ⑦ 유학 포기 / 유학 강행 ───────── */
+{
+  id:"p24", name:"홍지완", age:29, currentJob:"게임 그래픽 아티스트",
+  routeSummary:"유학 포기 → 국내 학원 → 게임회사 → 팀 이동",
+  routeTags:["유학포기","유학","미술","게임","그래픽","학원","돈"],
+  timeline:[
+    {year:2015, age:18, title:"유학을 준비하다", desc:"미술 유학을 목표로 어학 시험까지 봤다. 포트폴리오도 절반쯤 만들었다."},
+    {year:2016, age:19, title:"아버지 사업이 어려워지다", desc:"유학 얘기가 그냥 사라졌다. 아무도 그 얘기를 다시 꺼내지 않았다."},
+    {year:2017, age:20, title:"국내 게임 그래픽 학원", desc:"유학 비용의 20분의 1이었다. 매일 12시간씩 있었다."},
+    {year:2019, age:22, title:"중소 게임사 입사", desc:"첫 프로젝트가 출시 전에 엎어졌다."},
+    {year:2022, age:25, title:"이직, 출시작 참여", desc:"내가 만든 캐릭터가 게임에 들어갔다. 그 스크린샷을 아버지께 보냈다."},
+    {year:2026, age:29, title:"7년차 아티스트", desc:"지금은 후배들 포트폴리오를 봐 준다."}
+  ],
+  parentWords:"“지금 상황에서 유학은 무리다. 미안하다.” 아버지가 딱 한 번 하신 말이다. 어머니는 “나중에 네가 벌어서 가면 되잖니”라고 하셨는데, 그 나중은 아직 안 왔다.",
+  howItWent:"반대라기보다 상황이었다. 그래서 싸울 대상이 없어서 더 힘들었다. 화를 낼 데가 없으니까 그냥 학원에 갔다. 3년쯤 지나서 아버지가 술 드시고 “그때 못 보내줘서 미안하다”고 하셨을 때 처음으로 그 얘기를 꺼냈다. “유학 갔으면 지금보다 잘했을지는 모르겠지만, 지금도 괜찮다”고 말씀드렸다. 반은 진심이고 반은 아니었다.",
+  parentNow:"아버지는 내 회사 게임을 직접 하신다. 잘 못하시면서 계속 하신다. 어머니는 아직도 “대학원이라도 외국으로 가면 어떻겠니”라고 하신다.",
+  regret:{level:"일부 있음", text:"지금 일은 좋아한다. 그런데 해외 스튜디오에서 일하는 또래를 볼 때마다 그때가 떠오른다. 실력 차이가 아니라 시작점 차이라는 걸 알아서 더 그렇다. 아버지를 원망하진 않는다. 다만 “못 갔다”와 “안 갔다”는 다르고, 나는 아직 그걸 완전히 정리하지 못했다."}
+},
+{
+  id:"p25", name:"남소윤", age:31, currentJob:"현대무용가 (베를린 거주)",
+  routeSummary:"무용과 → 유학 강행 → 독일 정착 → 프리랜서 무용수",
+  routeTags:["유학","유학강행","예체능","무용","해외","독일","프리랜서"],
+  timeline:[
+    {year:2013, age:18, title:"무용과 입학", desc:"부모님이 “대학까지만”이라는 조건으로 허락하셨다."},
+    {year:2017, age:22, title:"졸업, 유학을 결심하다", desc:"조건을 어기는 거였다. 이때부터 진짜 싸움이 시작됐다."},
+    {year:2018, age:23, title:"돈을 모으다", desc:"1년 반 동안 학원 강사와 카페 알바를 병행해서 1,800만 원을 모았다."},
+    {year:2019, age:24, title:"베를린 도착", desc:"부모님 도움 없이 갔다. 첫 6개월은 독일어를 못 해서 거의 말을 안 했다."},
+    {year:2021, age:26, title:"첫 컴퍼니 계약", desc:"단기 계약이었지만 처음으로 무용으로만 돈을 벌었다."},
+    {year:2024, age:29, title:"체류 자격 안정", desc:"5년 만에 “여기서 살아도 된다”는 서류를 받았다."},
+    {year:2026, age:31, title:"프로젝트 단위로 활동", desc:"1년에 세 나라에서 공연한다. 부모님이 작년에 처음 오셨다."}
+  ],
+  parentWords:"“무용도 겨우 허락했는데 유학까지? 네가 뭘 안다고 혼자 외국을 가.” 어머니는 여권을 숨기신 적도 있다. 아버지는 “돈은 한 푼도 못 준다”고 하셨는데, 그게 협박이 아니라 진짜 형편이었다는 걸 나중에 알았다.",
+  howItWent:"돈으로 증명했다. 1년 반 동안 내가 직접 모으는 걸 두 분이 옆에서 보셨고, 그 과정에서 반대가 서서히 걱정으로 바뀌었다. 출국 전날 어머니가 봉투를 주셨는데 200만 원이 들어 있었다. 반대하셨던 분이 몰래 모으신 돈이었다. 부모님이 반대한 건 유학이 아니라, 내가 준비 없이 다칠까 봐였다.",
+  parentNow:"어머니는 이제 내 공연 영상을 카톡 프로필에 걸어 두신다. 아버지는 독일 시차를 외우고 계신다. 작년에 두 분이 베를린에 오셨을 때 아버지가 극장 앞에서 사진을 스무 장 찍으셨다.",
+  regret:{level:"없음", text:"후회 없다. 외롭고 가난했지만 그 6년이 나를 만들었다. 다만 한국에 있는 가족 행사에 6년 동안 한 번도 못 간 건 계속 마음에 남는다. 할머니 장례식에도 못 갔다. 그건 유학의 대가였고, 나는 그걸 알고 갔다."}
+},
+{
+  id:"p26", name:"전우현", age:33, currentJob:"호텔 조리팀 수셰프",
+  routeSummary:"요리 유학 강행 → 중도 귀국 → 국내 호텔 → 수셰프",
+  routeTags:["유학","유학강행","중퇴","요리","셰프","호텔","귀국"],
+  timeline:[
+    {year:2012, age:19, title:"조리과 대신 유학을 택하다", desc:"프랑스 요리학교를 목표로 했다. 부모님 반대가 심했지만 밀어붙였다."},
+    {year:2014, age:21, title:"프랑스 도착", desc:"학비와 생활비로 부모님이 6,000만 원을 쓰셨다. 그 숫자를 지금도 기억한다."},
+    {year:2015, age:22, title:"1년 반 만에 중단", desc:"언어와 돈, 둘 다 안 됐다. 제일 힘들었던 건 그걸 집에 말하는 거였다."},
+    {year:2016, age:23, title:"귀국, 동네 레스토랑 주방", desc:"프랑스에서 배운 것보다 여기서 배운 게 많았다는 게 아이러니였다."},
+    {year:2019, age:26, title:"호텔 입사", desc:"밑바닥부터 다시 시작했다."},
+    {year:2023, age:30, title:"파트 셰프", desc:"유학 경력이 아니라 국내 7년 경력으로 올라갔다."},
+    {year:2026, age:33, title:"수셰프", desc:"프랑스에서 배운 소스 하나가 아직 우리 메뉴에 있다."}
+  ],
+  parentWords:"“그 돈이면 여기서 가게를 차리겠다. 네가 뭘 안다고 외국까지 가.” 아버지는 유학 자금을 마련하시면서도 마지막까지 그러셨다. 어머니는 “가서 안 되면 어떡할 거니”라고 물으셨고, 나는 그 질문에 대답을 준비하지 않았었다.",
+  howItWent:"강행했고, 실패했고, 돌아왔다. 귀국 비행기에서 뭐라고 말씀드릴지 계속 연습했는데 공항에서 어머니 얼굴을 보자마자 다 잊어버렸다. 아버지는 3개월 동안 나랑 말을 안 하셨다. 그 침묵을 깬 건 내가 호텔에 합격했다는 소식이었다. 부모님을 다시 설득한 게 아니라, 실패 이후에 뭘 했는지로 다시 증명해야 했다.",
+  parentNow:"아버지는 이제 호텔에 손님으로 오신다. 내가 만든 걸 드시고 “짜다”고 하신다. 어머니는 그 6,000만 원 얘기를 한 번도 다시 꺼내신 적이 없는데, 나는 그게 더 마음에 걸린다.",
+  regret:{level:"일부 있음", text:"유학을 간 건 후회 안 한다. 준비 없이 간 걸 후회한다. 언어를 못 하는 상태로 갔고, 돈이 얼마나 드는지 계산도 안 했다. 부모님 돈 6,000만 원을 1년 반에 태운 건 평생 갚아야 할 빚이라고 생각한다. 요리를 그만두지 않은 건 잘한 일이다."}
+},
+{
+  id:"p27", name:"민가영", age:27, currentJob:"한영 통번역가",
+  routeSummary:"유학 포기 → 국내 대학 → 통번역대학원 → 프리랜서",
+  routeTags:["유학포기","유학","어학","통역","번역","대학원","프리랜서"],
+  timeline:[
+    {year:2017, age:18, title:"교환학생 대신 유학을 원했다", desc:"부모님은 “대학은 한국에서”라고 못을 박으셨다."},
+    {year:2018, age:19, title:"국내 영문과 입학", desc:"타협이었다. 억울했지만 나쁘지 않았다."},
+    {year:2020, age:21, title:"교환학생 1년", desc:"결국 갔다. 1년으로 줄인 대신 학비 부담이 없었다."},
+    {year:2022, age:23, title:"통번역대학원 입학", desc:"이때 부모님이 처음으로 “이건 우리가 돕겠다”고 하셨다."},
+    {year:2024, age:25, title:"졸업, 프리랜서 시작", desc:"첫해 수입이 불규칙했다. 이때 잠깐 반대가 다시 살아났다."},
+    {year:2026, age:27, title:"고정 거래처 5곳", desc:"동시통역 일이 늘고 있다."}
+  ],
+  parentWords:"“유학 가면 한국에 친구가 하나도 안 남아. 여기서도 충분히 할 수 있잖아.” 어머니가 제일 많이 하신 말이다. 아버지는 “유학 갔다 와서 취업 안 되는 애들 많다더라”고 하셨다.",
+  howItWent:"완전한 유학 대신 교환학생 1년으로 협상했다. 처음엔 지는 거라고 생각했는데 결과적으로는 내가 원한 걸 대부분 얻었다. 부모님은 4년을 못 견디셨던 거지 1년을 반대하신 게 아니었다. 요구를 잘게 쪼개서 하나씩 통과시키는 게 전부를 걸고 싸우는 것보다 나았다.",
+  parentNow:"어머니는 내가 통역한 행사 영상을 몇 번씩 돌려 보신다. 아버지는 프리랜서 수입이 불규칙한 걸 아직 불안해하시고 매달 물어보신다. 유학 얘기는 이제 “그때 안 가길 잘했지?”라는 농담으로만 나온다.",
+  regret:{level:"없음", text:"후회 없다. 유학을 갔으면 지금보다 영어는 더 나았을 수도 있지만 통번역대학원은 못 갔을 거다. 다만 열여덟에 “안 된다”는 말을 들었을 때 이유를 물어보지 않고 그냥 억울해만 했던 건 아쉽다. 이유를 물었으면 협상이 3년 빨랐을 거다."}
+},
+
+/* ───────── ⑧ 학과 변경 · 편입 ───────── */
+{
+  id:"p28", name:"곽선우", age:28, currentJob:"대학병원 간호사",
+  routeSummary:"공대 2년 → 자퇴 후 간호학과 재입학 → 대학병원",
+  routeTags:["학과변경","재입학","간호","의료","공대","진로전환"],
+  timeline:[
+    {year:2016, age:18, title:"공대 입학", desc:"성적이 되니까 갔다. 그 이상의 이유가 없었다."},
+    {year:2018, age:20, title:"2년 만에 그만두기로", desc:"군대에서 의무병을 하면서 확신이 생겼다."},
+    {year:2019, age:21, title:"수능을 다시 보다", desc:"스물한 살에 다시 학원에 앉는 게 창피했다."},
+    {year:2020, age:22, title:"간호학과 입학", desc:"동기들이 네 살 어렸다. 처음엔 그게 제일 신경 쓰였다."},
+    {year:2024, age:26, title:"대학병원 입사", desc:"3교대가 시작됐다."},
+    {year:2026, age:28, title:"3년차, 중환자실", desc:"남자 간호사가 우리 병동에 넷이다."}
+  ],
+  parentWords:"“공대 나오면 취업 걱정 없는데 왜 그걸 버려. 남자가 간호사를 왜 해.” 아버지가 하신 말이다. 어머니는 “2년을 버렸다”는 말을 반년 동안 하셨다.",
+  howItWent:"의무병 때 쓴 기록을 보여드렸다. 내가 어떤 순간에 살아 있다고 느꼈는지 적어둔 게 있었다. 말로 하면 감정적으로 들릴 얘기를 종이로 보여주니까 다르게 받아들이셨다. 그리고 “2년이 아까워서 40년을 버리는 게 맞냐”고 물었다. 아버지가 그 문장에 며칠을 생각하시더니 학원비를 주셨다.",
+  parentNow:"아버지는 이제 병원에서 나를 만난 지인들 얘기를 자랑처럼 하신다. 어머니는 내가 야간 근무를 하면 새벽에 깨서 문자를 보내신다. “남자가 왜”라는 말은 그날 이후로 한 번도 안 나왔다.",
+  regret:{level:"없음", text:"후회 없다. 공대 2년도 완전히 버린 건 아니다. 병원 장비 다루는 게 남들보다 빨랐다. 다만 3교대는 여전히 몸이 힘들고, 이 일을 마흔까지 할 수 있을지는 계속 생각한다."}
+},
+{
+  id:"p29", name:"표하은", age:26, currentJob:"식품회사 연구원",
+  routeSummary:"약대 준비 → 편입 두 번 실패 → 식품공학 전공 살려 취업",
+  routeTags:["편입","학과변경","약대","실패","연구원","식품","시험"],
+  timeline:[
+    {year:2018, age:18, title:"식품공학과 입학", desc:"약대에 가고 싶었는데 점수가 안 됐다."},
+    {year:2020, age:20, title:"약대 편입 준비 시작", desc:"부모님이 학원비를 대셨다. 기대가 컸다."},
+    {year:2021, age:21, title:"1차 실패", desc:"“한 번 더”라는 말이 자연스럽게 나왔다."},
+    {year:2022, age:22, title:"2차 실패", desc:"이때 처음으로 그만두겠다고 말했고 집에서 두 달을 싸웠다."},
+    {year:2023, age:23, title:"원래 전공으로 돌아가다", desc:"3학년 때 연구실에 들어갔다. 2년 늦게 시작한 셈이었다."},
+    {year:2025, age:25, title:"식품회사 연구직 입사", desc:"지금 일이 싫지 않다. 그게 좀 이상했다."},
+    {year:2026, age:26, title:"2년차 연구원", desc:"신제품 하나에 내 이름이 들어갔다."}
+  ],
+  parentWords:"“약사는 평생 가는 직업이야. 두 번 떨어졌으면 세 번째는 되지 않겠니.” 어머니가 하신 말이다. 아버지는 “네가 지금 포기하면 그 2년은 다 뭐가 되냐”고 하셨다.",
+  howItWent:"매몰비용 얘기를 계속 들었다. 세 번째를 안 하겠다고 말한 날, 어머니가 “너는 끈기가 없다”고 하셨는데 그 말이 제일 오래 남았다. 결국 설득한 건 내가 아니라 취업이었다. 연구실에서 쓴 논문과 최종 합격 통보가 대화를 끝냈다. 그전까지 1년 반은 그냥 견뎠다고 하는 게 맞다.",
+  parentNow:"어머니는 이제 내 회사 제품을 마트에서 사 오신다. 그런데 아직도 약사인 사촌 언니 얘기가 나오면 방 안 공기가 잠깐 바뀐다. 아버지는 “네 전공이 잘 맞았던 거다”라고 하시는데, 그렇게 정리하기까지 3년이 걸리셨다.",
+  regret:{level:"일부 있음", text:"편입을 시도한 건 후회 안 한다. 두 번째 도전을 한 건 조금 후회한다. 첫 번째 떨어졌을 때 이미 마음은 알고 있었는데 부모님 기대 때문에 1년을 더 썼다. 그 1년에 연구실에 들어갔으면 지금 위치가 달랐을 거다. 남의 기대로 결정을 미루는 게 제일 비싸다는 걸 배웠다."}
+},
+{
+  id:"p30", name:"지성민", age:30, currentJob:"도시계획 연구원",
+  routeSummary:"지방대 → 편입 → 대학원 → 연구기관",
+  routeTags:["편입","학과변경","대학원","연구","지방대","도시계획","학벌"],
+  timeline:[
+    {year:2015, age:19, title:"지방 사립대 입학", desc:"부모님은 “거기라도 어디냐”고 하셨고 나는 그 말이 싫었다."},
+    {year:2017, age:21, title:"편입 준비", desc:"학교를 다니면서 준비했다. 자퇴는 안 했다. 그게 부모님과의 조건이었다."},
+    {year:2018, age:22, title:"편입 성공", desc:"3학년으로 들어갔다. 2년 동안 학점 관리만 했다."},
+    {year:2020, age:24, title:"졸업, 대학원 진학", desc:"부모님이 “이제 그만 벌어라”고 하셨을 때 제일 크게 부딪혔다."},
+    {year:2023, age:27, title:"석사 졸업, 연구기관 입사", desc:"공공 프로젝트를 맡았다."},
+    {year:2026, age:30, title:"7년차 연구원", desc:"내가 참여한 계획이 실제로 동네를 바꾸는 걸 봤다."}
+  ],
+  parentWords:"“지금 학교도 나쁘지 않은데 왜 굳이. 편입이 되면 다행이고 안 되면 2년 날리는 거야.” 아버지는 확률로 반대하셨다. 어머니는 “대학원까지 가면 서른에 취업하는데 그때 결혼은 어떡하냐”고 하셨다.",
+  howItWent:"편입은 학교를 안 그만두고 병행하는 걸로 합의했다. 실패해도 잃는 게 없는 구조를 만들었더니 반대가 절반으로 줄었다. 대학원 때는 조교 자리와 장학금을 먼저 확보하고 말씀드렸다. 부모님이 반대하신 건 내 선택이 아니라 그 선택의 비용이었다. 비용을 내가 감당하는 그림을 먼저 만들면 대화가 훨씬 쉬워진다는 걸 두 번 다 배웠다.",
+  parentNow:"아버지는 내가 참여한 사업 기사가 나오면 링크를 친척 단톡방에 뿌리신다. 어머니는 여전히 결혼 얘기를 하신다. 학교 얘기는 이제 안 하신다.",
+  regret:{level:"없음", text:"후회 없다. 다만 열아홉의 나는 학교 이름 때문에 1년을 통째로 우울하게 보냈는데, 지금 보면 그 시간이 제일 아깝다. 편입을 후회하는 게 아니라 편입 전에 나를 미워한 시간을 후회한다."}
+}
+];
+
+const BY_ID = Object.fromEntries(PEOPLE.map(p => [p.id, p]));
+
+/* ============================================================
+   전문용어 풀이 (부모 전용 페이지에서 사용)
+   ============================================================ */
+const GLOSSARY = {
+  "산업기능요원":"군대에 가는 대신 지정된 회사에서 일하며 병역을 마치는 제도",
+  "특성화고":"기술과 실무를 가르치는 고등학교",
+  "마이스터고":"한 가지 산업 분야의 기술자를 키우는 고등학교",
+  "상업고":"회계와 금융 실무를 가르치는 고등학교",
+  "현장실습":"고등학교 3학년 때 실제 회사에 나가 일해 보는 과정",
+  "사내대학":"회사가 직원을 위해 운영하는 정식 대학 과정",
+  "고졸 공채":"고등학교 졸업자만 뽑는 공개 채용",
+  "부트캠프":"몇 달 동안 집중해서 기술을 가르치는 사설 교육 과정",
+  "국비":"정부가 교육비를 대신 내주는",
+  "포트폴리오":"자기가 만든 작품과 결과물을 모아 정리한 자료",
+  "프리랜서":"회사에 소속되지 않고 일 단위로 계약해서 일하는 사람",
+  "스타트업":"이제 막 시작한 작은 회사",
+  "에이전시":"여러 회사의 일을 대신 맡아 해 주는 회사",
+  "인하우스":"회사 안에 직접 소속되어 일하는 것",
+  "백엔드":"눈에 보이지 않는 프로그램 속을 만드는 일",
+  "프론트엔드":"화면에 보이는 부분을 만드는 일",
+  "데이터 엔지니어":"회사에 쌓인 기록과 숫자를 쓸 수 있게 정리하는 사람",
+  "QA":"만든 프로그램에 문제가 없는지 검사하는 일",
+  "UI":"사람이 쓰는 화면의 생김새와 사용법",
+  "프로덕트 디자이너":"사람이 쓰는 앱과 화면을 설계하는 사람",
+  "일러스트레이터":"그림을 그려서 책·광고·상품에 쓰이게 하는 사람",
+  "세션":"공연이나 녹음에서 연주를 맡아 하는 일",
+  "앙상블":"무대에서 여러 명이 함께 노래하고 춤추는 배역",
+  "실용음악":"대중음악을 전문으로 가르치는 분야",
+  "번아웃":"오래 무리해서 몸과 마음이 다 타 버린 상태",
+  "편입":"다니던 대학을 그만두고 다른 대학의 3학년으로 옮겨 들어가는 것",
+  "공시":"공무원 시험",
+  "구독 서비스":"매달 일정 금액을 내면 정기적으로 물건을 받아 보는 방식",
+  "수셰프":"주방에서 총괄 요리사 바로 아래를 맡는 사람",
+  "교환학생":"학교를 옮기지 않고 한 학기나 1년만 외국 대학에서 공부하는 제도",
+  "지상직":"비행기를 타지 않고 공항에서 손님을 맞는 항공사 직원",
+  "코딩 테스트":"채용할 때 프로그램을 직접 짜게 해서 실력을 보는 시험",
+  "매몰비용":"이미 써 버려서 되돌릴 수 없는 시간이나 돈"
+};
+const GLOSS_KEYS = Object.keys(GLOSSARY).sort((a,b) => b.length - a.length);
+
+/* ============================================================
+   폴백 — 랜딩 예시 칩 4개는 미리 만든 결과를 그대로 돌려준다
+   ============================================================ */
+const PRESETS = [
+  {
+    q:"대학 안 가면 나중에 후회한대요",
+    results:[
+      {id:"p01", reason:"이분도 “평생 기름때 묻히고 살 거냐”는 말을 들으며 열아홉에 공장으로 나가셨고, 말로 설득하는 대신 월급 명세서와 표창장을 식탁에 올려두는 방식으로 10년을 지나오셨습니다."},
+      {id:"p02", reason:"이분도 “남들 다 가는 데는 이유가 있다”는 말을 원서 쓰는 날까지 들으셨고, 지금은 잘 지내면서도 “대학 얘기가 나오면 아직 목소리가 작아진다”고 솔직하게 말씀하십니다."},
+      {id:"p13", reason:"이분도 “1년만 참으면 되는데 왜 못 참냐”는 말을 들으며 재수 대신 일을 시작하셨고, 1년만 해 보고 안 되면 재수하겠다는 약속으로 부모님과 시간을 벌어내셨습니다."}
+    ]
+  },
+  {
+    q:"예체능 하면 굶어 죽는대요",
+    results:[
+      {id:"p09", reason:"이분도 “기타 쳐서 밥 먹고 살 수 있냐”는 말을 3년 동안 들으셨고, 지금은 수입의 70%를 레슨으로 채우면서 나머지 30%로 음악을 지키고 계십니다."},
+      {id:"p10", reason:"이분도 “그림 잘 그리는 애가 백 명이면 그중 하나만 먹고산다”는 말을 들으셨고, 6개월치 생활비를 미리 모아 통장을 보여드리는 방식으로 부모님의 불안을 줄여 가셨습니다."},
+      {id:"p12", reason:"이분도 “배우는 얼굴 알려지기 전까지 다 굶는다”는 말을 들으셨고, 설명을 포기하고 공연 표를 보내드린 끝에 커튼콜에서 일어나 박수 치는 아버지를 보게 되셨습니다."}
+    ]
+  },
+  {
+    q:"남들 다 가는 데는 이유가 있대요",
+    results:[
+      {id:"p21", reason:"이분도 “남들 다 가는 데는 이유가 있다”는 말을 3년 동안 들으셨고, 매출이 아니라 최악의 경우 잃을 금액을 먼저 적어 드리는 방식으로 아버지의 반대를 통과하셨습니다."},
+      {id:"p17", reason:"이분도 “남들 다 스무 살부터 하는 걸 지금 따라잡을 수 있냐”는 말을 들으셨고, 기한과 통장 잔고를 함께 보여드리며 스물일곱에 신입으로 다시 시작하셨습니다."},
+      {id:"p22", reason:"이분도 같은 말을 들으며 시험을 접고 창업하셨지만 1년 8개월 만에 폐업하셨고, “부모님께 통보한 걸 제일 후회한다”고 지금도 솔직하게 말씀하십니다."}
+    ]
+  },
+  {
+    q:"자퇴하고 개발하고 싶은데 반대하세요",
+    results:[
+      {id:"p05", reason:"이분도 “학원 6개월 다녀서 되는 거면 세상 사람들이 다 한다”는 말을 들으며 자퇴하셨고, 지금은 그때의 자기와 같은 사람들의 면접관 자리에 앉아 계십니다."},
+      {id:"p08", reason:"이분도 교대를 자퇴하며 “네가 지금 뭘 버리는지 모른다”는 말을 들으셨고, 거짓말로 시작한 탓에 부모님과 3년을 등지고 산 걸 지금도 손해라고 말씀하십니다."},
+      {id:"p07", reason:"이분도 같은 마음으로 공대를 자퇴하셨지만 4년 만에 무너져 다시 대학에 가셨고, “말리지는 않지만 나갈 곳이 정해져 있냐고는 꼭 묻는다”고 하십니다."}
+    ]
+  }
+];
+
+const SYNONYMS = {
+  "대학":["대학","자퇴","진학","학벌","편입","재수"],
+  "자퇴":["자퇴","대학자퇴","중퇴"],
+  "재수":["재수","재수거부","수능","입시"],
+  "예체능":["예체능","음악","미술","체육","무용","연기","뮤지컬","실용음악","미대","음대","체대","예대","예고","체고"],
+  "음악":["음악","음대","실용음악","기타","밴드","세션","작곡","보컬"],
+  "미술":["미술","미대","일러스트","그림","드로잉","웹툰","예고"],
+  "체육":["체육","체대","축구","야구","운동","선수","체고","지도자"],
+  "개발":["개발","개발자","코딩","프로그래밍","부트캠프","프론트엔드","백엔드","IT"],
+  "취업":["취업","고졸취업","바로취업","공채","입사"],
+  "공무원":["공무원","공무원준비","공시","9급","시험","노량진","공기업"],
+  "창업":["창업","자영업","사업","장사","가게","폐업"],
+  "유학":["유학","유학포기","유학강행","해외","외국","교환학생"],
+  "편입":["편입","학과변경","재입학","전과"],
+  "고등학교":["특성화고","마이스터고","상업고","예고","체고","고졸"],
+  "돈":["돈","연봉","수입","생활비","빚","대출","학비"],
+  "후회":["후회","실패","폐업","방황","번아웃"],
+  "간호":["간호","의료","병원","간호사"],
+  "디자인":["디자인","디자이너","UI","일러스트","그래픽"],
+  "요리":["요리","셰프","조리","주방","호텔"],
+  "미용":["미용","헤어","디자이너","가게"],
+  "은행":["은행","금융","공기업","사무직"],
+  "게임":["게임","그래픽","아티스트"]
+};
+
+function normalize(s){ return (s||"").toLowerCase().replace(/[\s.,!?"'“”‘’·~\-—()]/g, ""); }
+
+function expandTokens(q){
+  const raw = (q||"").toLowerCase();
+  const set = new Set();
+  Object.keys(SYNONYMS).forEach(k => {
+    const group = SYNONYMS[k];
+    // 키뿐 아니라 그룹 안의 표현("미대","체대" 등)이 걸려도 그룹 전체를 펼친다
+    if (raw.includes(k) || group.some(v => raw.includes(v))) group.forEach(v => set.add(v));
+  });
+  raw.split(/[\s,.!?]+/).forEach(t => { if (t.length >= 2) set.add(t); });
+  return [...set];
+}
+
+function firstSentence(text){
+  const m = (text||"").match(/“([^”]{4,60})”/);
+  if (m) return m[1];
+  const s = (text||"").split(/(?<=[.!?])\s/)[0] || "";
+  return s.length > 60 ? s.slice(0, 58) + "…" : s;
+}
+
+function templateReason(p){
+  return "이분도 부모님께 “" + firstSentence(p.parentWords) + "”라는 말을 들으셨고, 지금은 " +
+         p.currentJob + "로 일하고 계십니다.";
+}
+
+/* 키워드 매칭 폴백 */
+function keywordSearch(q){
+  const tokens = expandTokens(q);
+  const scored = PEOPLE.map(p => {
+    let score = 0;
+    const tagBlob  = p.routeTags.join(" ").toLowerCase() + " " + p.routeSummary.toLowerCase() + " " + p.currentJob.toLowerCase();
+    const wordBlob = (p.parentWords + " " + p.howItWent + " " + p.parentNow + " " + p.regret.text).toLowerCase();
+    tokens.forEach(t => {
+      if (tagBlob.includes(t))  score += 3;
+      if (wordBlob.includes(t)) score += 2;
+    });
+    return { p, score: score + Math.random() * 0.5 };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  let top = scored.slice(0, 3).map(s => s.p);
+  if (scored[0].score < 1.6) {                       // 아무것도 안 걸리면 대표 3인
+    top = ["p01", "p09", "p07"].map(id => BY_ID[id]);
+  }
+  return top.map(p => ({ id: p.id, reason: templateReason(p) }));
+}
+
+function fallbackSearch(q){
+  const nq = normalize(q);
+  const preset = PRESETS.find(pr => {
+    const np = normalize(pr.q);
+    return nq === np || nq.includes(np) || np.includes(nq);
+  });
+  if (preset) return preset.results.slice();
+  return keywordSearch(q);
+}
+
+/* ============================================================
+   AI 검색 — 30명 프로필을 통째로 넣고 한 번 호출한다
+   ============================================================ */
+function buildPrompt(q){
+  const slim = PEOPLE.map(p => ({
+    id:p.id, name:p.name, age:p.age, currentJob:p.currentJob,
+    routeSummary:p.routeSummary, parentWords:p.parentWords,
+    howItWent:p.howItWent, parentNow:p.parentNow, regret:p.regret
+  }));
+  return [
+    "아래는 진로 문제로 부모님과 갈등을 겪었던 30명의 프로필이다.",
+    "",
+    JSON.stringify(slim),
+    "",
+    '사용자의 상황: "' + q + '"',
+    "",
+    "위 30명 중 이 사용자의 상황과 가장 비슷한 3명을 골라라.",
+    "경로가 같은 것보다 '부모님이 한 말'과 '겪은 갈등'이 비슷한 것을 우선해라.",
+    "각 인물마다 왜 골랐는지 1문장으로 써라.",
+    "그 문장은 사용자에게 직접 보여지므로 따뜻하고 구체적이어야 하며, '이분도 ~하셨습니다' 같은 형태로 쓴다.",
+    "반드시 아래 JSON만 출력하고 다른 말은 붙이지 마라. 마크다운 코드펜스도 금지.",
+    '{"results":[{"id":"p01","reason":"..."},{"id":"p02","reason":"..."},{"id":"p03","reason":"..."}]}'
+  ].join("\n");
+}
+
+function stripFence(text){
+  return (text || "")
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+}
+
+async function aiSearch(q){
+  if (!API_KEY) return { results: fallbackSearch(q), source: "fallback" };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);   // 타임아웃 8초
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1000,
+        messages: [{ role: "user", content: buildPrompt(q) }]
+      })
+    });
+    if (!res.ok) throw new Error("http " + res.status);
+
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || "").join("");
+    const parsed = JSON.parse(stripFence(text));
+
+    const results = (parsed.results || [])
+      .filter(r => r && BY_ID[r.id] && typeof r.reason === "string" && r.reason.trim())
+      .slice(0, 3);
+    if (results.length < 3) throw new Error("not enough results");
+
+    return { results, source: "ai" };
+  } catch (e) {
+    return { results: fallbackSearch(q), source: "fallback" };   // UI에는 아무 에러도 안 보인다
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/* ============================================================
+   유틸
+   ============================================================ */
+const app     = document.getElementById("app");
+const toastEl = document.getElementById("toast");
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+let toastTimer = null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("on"), 2600);
+}
+
+function badge(level){
+  const cls = level === "없음" ? "badge-none" : (level === "많이 있음" ? "badge-much" : "badge-some");
+  return '<span class="badge ' + cls + '"><i></i>후회 ' + esc(level) + "</span>";
+}
+
+function go(hash){ location.hash = hash; }
+
+function searchbarHTML(value, compact){
+  return '' +
+    '<form class="searchbar' + (compact ? " compact" : "") + '" data-search>' +
+      '<input name="q" type="search" autocomplete="off" value="' + esc(value || "") + '"' +
+        ' placeholder="부모님이 뭐라고 하시나요?" aria-label="부모님이 하신 말씀을 입력하세요" />' +
+      "<button type=\"submit\">찾기</button>" +
+    "</form>";
+}
+
+function siteHeader(activeQuery){
+  return '' +
+  '<header class="border-b border-line bg-paper2/70 backdrop-blur sticky top-0 z-40">' +
+    '<div class="wrap py-4">' +
+      '<div class="flex items-center gap-6">' +
+        '<a href="#/" class="brand flex-none">선례<small>先例</small></a>' +
+        '<div class="flex-1 min-w-0">' + searchbarHTML(activeQuery, true) + "</div>" +
+      "</div>" +
+    "</div>" +
+  "</header>";
+}
+
+function bindSearchForms(scope){
+  scope.querySelectorAll("[data-search]").forEach(form => {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const q = form.querySelector('input[name="q"]').value.trim();
+      if (!q) return;
+      go("/search?q=" + encodeURIComponent(q));
+    });
+  });
+}
+
+/* 등장 애니메이션 */
+function playReveal(scope, sel, gap){
+  const nodes = scope.querySelectorAll(sel || ".reveal");
+  nodes.forEach((n, i) => {
+    setTimeout(() => n.classList.add("on"), REDUCED ? 0 : (gap || 90) * i + 40);
+  });
+}
+
+/* ============================================================
+   #/  랜딩
+   ============================================================ */
+const INTRO_LINES = [
+  "그래서 대학은 안 갈 거야?",
+  "남들 다 가는 데는 이유가 있어.",
+  "네가 뭘 안다고."
+];
+const CHIPS = [
+  "대학 안 가면 나중에 후회한대요",
+  "예체능 하면 굶어 죽는대요",
+  "남들 다 가는 데는 이유가 있대요",
+  "자퇴하고 개발하고 싶은데 반대하세요"
+];
+
+let introTimers = [];
+let introDone   = false;
+
+function clearIntro(){
+  introTimers.forEach(clearTimeout);
+  introTimers = [];
+}
+
+function endIntro(){
+  clearIntro();
+  introDone = true;
+  const ov   = document.getElementById("introOverlay");
+  const skip = document.getElementById("skipBtn");
+  ov.classList.add("gone");
+  skip.hidden = true;
+  setTimeout(() => { ov.hidden = true; }, REDUCED ? 0 : 780);
+  const stage = document.getElementById("heroStage");
+  if (stage) playReveal(stage, ".reveal", 160);
+}
+
+function runIntro(){
+  const ov   = document.getElementById("introOverlay");
+  const line = document.getElementById("introLine");
+  const skip = document.getElementById("skipBtn");
+
+  if (REDUCED) { ov.hidden = true; introDone = true; const s = document.getElementById("heroStage"); if (s) playReveal(s, ".reveal", 0); return; }
+
+  ov.hidden = false;
+  ov.classList.remove("gone");
+  skip.hidden = false;
+  line.textContent = "";
+  line.classList.remove("show");
+
+  let t = 260;
+  INTRO_LINES.forEach(text => {
+    introTimers.push(setTimeout(() => { line.textContent = text; line.classList.add("show"); }, t));
+    introTimers.push(setTimeout(() => { line.classList.remove("show"); }, t + 1250));
+    t += 1600;                                   // 각 대사 1.6초
+  });
+  introTimers.push(setTimeout(endIntro, t + 800)); // 0.8초 정적 후 메인 카피
+}
+
+function renderLanding(){
+  app.innerHTML = '' +
+  '<div class="min-h-screen flex flex-col">' +
+    '<div class="wrap pt-7">' +
+      '<a href="#/" class="brand">선례<small>先例</small></a>' +
+    "</div>" +
+
+    '<section id="heroStage" class="flex-1 flex items-center">' +
+      '<div class="wrap w-full py-14 md:py-20">' +
+        '<p class="kicker reveal mb-7">먼저 간 사람들의 기록</p>' +
+
+        '<h1 class="reveal font-extrabold leading-[1.25] tracking-[-0.04em] max-w-[19ch]" style="font-size:clamp(29px,5.1vw,58px)">' +
+          "부모님은 그 길이 위험해서<br/>반대하는 게 아닙니다.<br/>" +
+          '<span class="text-accent">그 길로 간 사람을 본 적이 없어서</span> 반대합니다.' +
+        "</h1>" +
+
+        '<p class="reveal mt-8 text-ink2 font-semibold" style="font-size:clamp(17px,2.3vw,22px)">먼저 간 사람들이 여기 있습니다.</p>' +
+
+        '<div class="reveal mt-11 max-w-[720px]">' + searchbarHTML("", false) + "</div>" +
+
+        '<div class="reveal mt-5 flex flex-wrap gap-2.5 max-w-[820px]">' +
+          CHIPS.map(c => '<button class="chip" data-chip="' + esc(c) + '">' + esc(c) + "</button>").join("") +
+        "</div>" +
+
+        '<div class="reveal mt-14 flex flex-wrap items-center gap-x-7 gap-y-3 text-[13.5px] text-ink3">' +
+          '<span><b class="text-ink font-bold">30명</b>의 이야기가 모여 있습니다</span>' +
+          '<span class="hidden sm:inline text-line2">|</span>' +
+          "<span>후회한 사람의 기록도 그대로 있습니다</span>" +
+          '<span class="hidden sm:inline text-line2">|</span>' +
+          '<button id="replayIntro" class="underline underline-offset-4 decoration-line2 hover:text-ink transition-colors">인트로 다시 보기</button>' +
+        "</div>" +
+      "</div>" +
+    "</section>" +
+
+    '<footer class="wrap py-8 text-[12.5px] text-ink3 border-t border-line">' +
+      "AI는 검색과 번역을 하고, 설득은 사람이 합니다." +
+    "</footer>" +
+  "</div>";
+
+  bindSearchForms(app);
+
+  app.querySelectorAll("[data-chip]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const q = btn.getAttribute("data-chip");
+      const input = app.querySelector('[data-search] input[name="q"]');
+      if (input) input.value = q;                 // 검색창에 자동 입력 후 즉시 검색
+      go("/search?q=" + encodeURIComponent(q));
+    });
+  });
+
+  const replay = document.getElementById("replayIntro");
+  if (replay) replay.addEventListener("click", () => {
+    app.querySelectorAll("#heroStage .reveal").forEach(n => n.classList.remove("on"));
+    introDone = false;
+    runIntro();
+  });
+
+  if (!introDone) runIntro();
+  else { document.getElementById("introOverlay").hidden = true; playReveal(app, "#heroStage .reveal", 90); }
+}
+
+/* ============================================================
+   #/search?q=...  검색 결과
+   ============================================================ */
+const LOADING_MSGS = ["30명의 이야기를 읽는 중", "비슷한 상황을 찾는 중", "이유를 정리하는 중"];
+const cache = new Map();
+let renderToken = 0;   // 화면이 바뀐 뒤 늦게 도착한 응답을 버리기 위한 토큰
+
+function skeletonHTML(){
+  return '' +
+  '<div class="card">' +
+    '<div class="flex items-center gap-3"><div class="sk h-5 w-28"></div><div class="sk h-5 w-16"></div></div>' +
+    '<div class="sk h-4 w-3/4 mt-5"></div>' +
+    '<div class="sk h-4 w-1/2 mt-3"></div>' +
+    '<div class="sk h-[74px] w-full mt-6 rounded-lg"></div>' +
+  "</div>";
+}
+
+function personCardHTML(p, reason, idx){
+  return '' +
+  '<button class="card card-enter" data-person="' + p.id + '" style="transition-delay:' + (idx * 110) + 'ms">' +
+    '<div class="flex items-start justify-between gap-4">' +
+      "<div>" +
+        '<div class="flex items-baseline gap-2.5 flex-wrap">' +
+          '<span class="text-[21px] font-extrabold tracking-[-0.03em]">' + esc(p.name) + "</span>" +
+          '<span class="text-[14px] text-ink3 font-semibold serifnum">' + p.age + "세</span>" +
+        "</div>" +
+        '<div class="mt-1.5 text-[15.5px] font-bold text-accent">' + esc(p.currentJob) + "</div>" +
+      "</div>" +
+      badge(p.regret.level) +
+    "</div>" +
+
+    '<p class="mt-4 text-[14.5px] leading-relaxed text-ink2 font-semibold">' + esc(p.routeSummary) + "</p>" +
+
+    '<div class="reason">' +
+      '<div class="reason-label"><i></i>AI가 이분을 고른 이유</div>' +
+      "<p>" + esc(reason) + "</p>" +
+    "</div>" +
+
+    '<div class="pt-5 mt-auto flex items-center justify-between">' +
+      '<div class="flex flex-wrap gap-1.5">' +
+        p.routeTags.slice(0, 3).map(t => '<span class="tag">' + esc(t) + "</span>").join("") +
+      "</div>" +
+      '<span class="text-[13px] font-bold text-ink3">이야기 보기 →</span>' +
+    "</div>" +
+  "</button>";
+}
+
+function renderSearch(q){
+  const token = ++renderToken;
+  app.innerHTML = '' +
+    siteHeader(q) +
+    '<div class="wrap py-9 md:py-12">' +
+      '<div class="max-w-[760px]">' +
+        '<p class="kicker mb-3">검색한 말</p>' +
+        '<p class="text-[19px] md:text-[23px] font-extrabold leading-snug tracking-[-0.03em]">“' + esc(q) + "”</p>" +
+        '<p id="resultMeta" class="mt-3 text-[14px] text-ink3 font-semibold">AI가 30명의 이야기 중에서 고르고 있습니다.</p>' +
+      "</div>" +
+      '<div id="results" class="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">' +
+        skeletonHTML() + skeletonHTML() + skeletonHTML() +
+      "</div>" +
+    "</div>";
+
+  bindSearchForms(app);
+
+  const meta   = document.getElementById("resultMeta");
+  const holder = document.getElementById("results");
+
+  let rotate = null;                      // paint()가 캐시 경로에서 먼저 불려도 안전하게
+
+  const cached = cache.get(q);
+  if (cached) { paint(cached); return; }
+
+  /* 로딩 문구 1.5초마다 교체 */
+  let mi = 0;
+  meta.textContent = LOADING_MSGS[0] + "…";
+  rotate = setInterval(() => {
+    mi = (mi + 1) % LOADING_MSGS.length;
+    meta.textContent = LOADING_MSGS[mi] + "…";
+  }, 1500);
+
+  const started = Date.now();
+  aiSearch(q).then(({ results }) => {
+    cache.set(q, results);
+    const wait = Math.max(0, 3400 - (Date.now() - started));   // 로딩 문구를 다 보여준다
+    setTimeout(() => { clearInterval(rotate); paint(results); }, REDUCED ? 0 : wait);
+  });
+
+  function paint(results){
+    clearInterval(rotate);
+    if (token !== renderToken) return;          // 이미 다른 화면으로 넘어갔다
+    meta.innerHTML = 'AI가 30명 중 <b class="text-ink font-bold">3명</b>을 골랐습니다.';
+    holder.innerHTML = results.map((r, i) => {
+      const p = BY_ID[r.id];
+      return p ? personCardHTML(p, r.reason, i) : "";
+    }).join("");
+    holder.querySelectorAll("[data-person]").forEach(btn => {
+      btn.addEventListener("click", () => go("/person/" + btn.getAttribute("data-person")));
+    });
+    requestAnimationFrame(() => {
+      holder.querySelectorAll(".card-enter").forEach(c => c.classList.add("on"));
+    });
+  }
+}
+
+/* ============================================================
+   #/person/:id  선배 상세
+   ============================================================ */
+let tlCleanup = null;
+
+function renderPerson(id){
+  const p = BY_ID[id];
+  if (!p) { go("/"); return; }
+
+  app.innerHTML = '' +
+    siteHeader("") +
+
+    '<article class="wrap-narrow py-10 md:py-14">' +
+      '<a href="#/" class="text-[13.5px] font-bold text-ink3 hover:text-ink transition-colors">← 다른 이야기 찾기</a>' +
+
+      '<header class="mt-6">' +
+        '<div class="flex flex-wrap items-center gap-3">' +
+          '<h1 class="font-extrabold tracking-[-0.04em]" style="font-size:clamp(32px,5.4vw,50px)">' + esc(p.name) + "</h1>" +
+          badge(p.regret.level) +
+        "</div>" +
+        '<p class="mt-3 text-[17px] md:text-[19px] font-bold text-accent">' + p.age + "세 · " + esc(p.currentJob) + "</p>" +
+        '<p class="mt-2 text-[15px] font-semibold text-ink2">' + esc(p.routeSummary) + "</p>" +
+        '<div class="mt-4 flex flex-wrap gap-1.5">' +
+          p.routeTags.map(t => '<span class="tag">' + esc(t) + "</span>").join("") +
+        "</div>" +
+      "</header>" +
+
+      '<hr class="hairline my-10" />' +
+
+      '<section>' +
+        '<h2 class="sec-title">걸어온 길</h2>' +
+        '<ol class="tl mt-6" id="timeline">' +
+          '<div class="tl-fill" id="tlFill"></div>' +
+          p.timeline.map(t =>
+            '<li class="tl-item">' +
+              '<span class="tl-dot"></span>' +
+              '<div class="flex items-baseline gap-2.5 flex-wrap">' +
+                '<span class="text-[15px] font-extrabold text-accent serifnum">' + t.year + "</span>" +
+                '<span class="text-[13px] font-bold text-ink3 serifnum">' + t.age + "세</span>" +
+              "</div>" +
+              '<h3 class="mt-1.5 text-[19px] md:text-[21px] font-extrabold tracking-[-0.03em] leading-snug">' + esc(t.title) + "</h3>" +
+              '<p class="mt-2 text-[15.5px] leading-[1.8] text-ink2">' + esc(t.desc) + "</p>" +
+            "</li>"
+          ).join("") +
+        "</ol>" +
+      "</section>" +
+
+      '<section class="mt-12">' +
+        '<h2 class="sec-title">그때 부모님이 하신 말</h2>' +
+        '<blockquote class="quote"><p>' + esc(p.parentWords) + "</p></blockquote>" +
+      "</section>" +
+
+      '<section class="mt-12">' +
+        '<h2 class="sec-title">어떻게 넘겼는지</h2>' +
+        '<p class="body-text">' + esc(p.howItWent) + "</p>" +
+      "</section>" +
+
+      '<section class="mt-12">' +
+        '<h2 class="sec-title">지금 부모님은</h2>' +
+        '<p class="body-text">' + esc(p.parentNow) + "</p>" +
+      "</section>" +
+
+      '<section class="mt-12">' +
+        '<div class="flex items-center gap-3 flex-wrap mb-3">' +
+          '<h2 class="sec-title" style="margin-bottom:0">후회하냐고 물으면</h2>' + badge(p.regret.level) +
+        "</div>" +
+        '<p class="body-text">' + esc(p.regret.text) + "</p>" +
+      "</section>" +
+
+      '<div class="mt-14 grid gap-3 sm:grid-cols-2">' +
+        '<button class="btn-primary" data-send>이 이야기를 부모님께 보내기</button>' +
+        '<button class="btn-ghost" data-counsel>상담 신청하기</button>' +
+      "</div>" +
+      '<p class="mt-4 text-[13px] text-ink3">보내기를 누르면 부모님이 읽기 편한 화면으로 바뀝니다.</p>' +
+    "</article>";
+
+  bindSearchForms(app);
+
+  app.querySelector("[data-send]").addEventListener("click", () => go("/parent/" + p.id));
+  app.querySelector("[data-counsel]").addEventListener("click", () => {
+    toast("상담 신청은 준비 중입니다. 곧 열립니다.");
+  });
+
+  initTimeline();
+}
+
+function initTimeline(){
+  if (tlCleanup) { tlCleanup(); tlCleanup = null; }
+
+  const tl   = document.getElementById("timeline");
+  const fill = document.getElementById("tlFill");
+  if (!tl || !fill) return;
+
+  const items = [...tl.querySelectorAll(".tl-item")];
+
+  if (REDUCED) {
+    items.forEach(i => i.classList.add("in"));
+    fill.style.height = "100%";
+    return;
+  }
+
+  /* 노드가 순차로 나타난다 */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = items.indexOf(e.target);
+        setTimeout(() => e.target.classList.add("in"), Math.min(i, 3) * 90);
+        io.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -18% 0px", threshold: 0.15 });
+  items.forEach(i => io.observe(i));
+
+  /* 선이 위에서 아래로 그려진다 */
+  let ticking = false;
+  function update(){
+    ticking = false;
+    const r    = tl.getBoundingClientRect();
+    const line = tl.offsetHeight - 32;
+    const mark = window.innerHeight * 0.62;
+    const prog = Math.max(0, Math.min(1, (mark - r.top) / Math.max(1, r.height)));
+    fill.style.height = Math.round(line * prog) + "px";
+  }
+  function onScroll(){
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
+
+  tlCleanup = () => {
+    io.disconnect();
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onScroll);
+  };
+}
+
+/* ============================================================
+   #/parent/:id  부모 전용 페이지
+   ============================================================ */
+function plainify(text){
+  let out = esc(text);
+  const used = [];
+  GLOSS_KEYS.forEach(k => {
+    const ek = esc(k);
+    const at = out.indexOf(ek);
+    if (at === -1) return;
+    if (used.some(u => ek.includes(u) || u.includes(ek))) return;   // 겹치는 용어는 한 번만
+    used.push(ek);
+    out = out.slice(0, at) + ek + '<span class="gloss">(' + esc(GLOSSARY[k]) + ")</span>" + out.slice(at + ek.length);
+  });
+  return out;
+}
+
+function renderParent(id){
+  const p = BY_ID[id];
+  if (!p) { go("/"); return; }
+
+  document.body.classList.add("parent-view");
+
+  app.innerHTML = '' +
+  '<div class="wrap-narrow py-12 md:py-20">' +
+
+    '<p style="font-size:17px;font-weight:800;letter-spacing:.09em;color:#9A7B4F">먼저 이 길을 걸어간 사람</p>' +
+
+    "<h1 class=\"mt-5\">" + esc(p.name) + " 님은 지금<br/>" + plainify(p.currentJob) + "로<br/>일하고 있습니다.</h1>" +
+
+    '<p class="p-body mt-7">올해 ' + p.age + "세입니다. " +
+      esc(p.name) + " 님도 " + p.timeline[0].age + "세 무렵, 부모님과 진로 때문에 크게 부딪혔습니다.</p>" +
+
+    '<div class="p-card mt-12">' +
+      "<h2>이 사람이 걸어온 길</h2>" +
+      '<div class="mt-7">' +
+        p.timeline.map(t =>
+          '<div class="p-step">' +
+            '<div class="p-year">' + t.year + "년 · " + t.age + "세</div>" +
+            "<div>" +
+              '<div style="font-size:22px;font-weight:800;line-height:1.45">' + plainify(t.title) + "</div>" +
+              '<div class="p-body" style="font-size:19px;line-height:1.9;margin-top:8px">' + plainify(t.desc) + "</div>" +
+            "</div>" +
+          "</div>"
+        ).join("") +
+      "</div>" +
+    "</div>" +
+
+    '<div class="mt-12" style="background:#F6F0E2;border-radius:16px;padding:34px 32px">' +
+      "<h2>그때 이 사람의 부모님이 하셨던 말</h2>" +
+      '<p class="p-body" style="margin-top:18px;font-weight:700;color:#4A4034">' + plainify(p.parentWords) + "</p>" +
+    "</div>" +
+
+    '<div class="mt-12">' +
+      "<h2>그래서 어떻게 됐는지</h2>" +
+      '<p class="p-body mt-5">' + plainify(p.howItWent) + "</p>" +
+    "</div>" +
+
+    '<div class="p-card mt-12" style="border-color:#D9CBA6;background:#FFFCF2">' +
+      "<h2>이 사람의 부모님은 지금 이렇게 말씀하십니다</h2>" +
+      '<p class="p-body mt-5" style="font-weight:700">' + plainify(p.parentNow) + "</p>" +
+    "</div>" +
+
+    '<div class="mt-12">' +
+      "<h2>후회하지 않느냐고 물었더니</h2>" +
+      '<p class="p-body mt-5">' + plainify(p.regret.text) + "</p>" +
+      '<p style="font-size:18px;font-weight:700;color:#7A5A3C;margin-top:16px">— 이 사람은 “후회가 ' + esc(p.regret.level) + '”이라고 답했습니다.</p>' +
+    "</div>" +
+
+    '<div class="mt-16 pt-9" style="border-top:2px solid #E8DFC8">' +
+      '<p style="font-size:22px;font-weight:800;color:#4A4034">이 페이지는 자녀분이 보냈습니다.</p>' +
+      '<p class="p-body mt-4" style="color:#6B6255">한 사람의 이야기일 뿐, 정답은 아닙니다.<br/>다만 이런 길을 걸어간 사람이 실제로 있다는 것만 전하고 싶었다고 합니다.</p>' +
+      '<div class="mt-9 flex flex-wrap gap-3">' +
+        '<a href="#/person/' + p.id + '" style="font-size:19px;font-weight:800;color:#8A5A2B;text-decoration:underline;text-underline-offset:6px">원래 화면으로 돌아가기</a>' +
+      "</div>" +
+    "</div>" +
+
+  "</div>";
+}
+
+/* ============================================================
+   라우터
+   ============================================================ */
+function parseHash(){
+  const raw = (location.hash || "#/").slice(1) || "/";
+  const qi   = raw.indexOf("?");
+  const path = qi === -1 ? raw : raw.slice(0, qi);
+  const qs   = qi === -1 ? ""  : raw.slice(qi + 1);
+  return { path, params: new URLSearchParams(qs) };
+}
+
+function route(){
+  renderToken++;
+  if (tlCleanup) { tlCleanup(); tlCleanup = null; }
+  document.body.classList.remove("parent-view");
+
+  const { path, params } = parseHash();
+  const seg = path.split("/").filter(Boolean);
+
+  if (path === "/" || seg.length === 0) {
+    renderLanding();
+  } else if (seg[0] === "search") {
+    const q = (params.get("q") || "").trim();
+    if (!q) { go("/"); return; }
+    clearIntro(); introDone = true;
+    document.getElementById("introOverlay").hidden = true;
+    document.getElementById("skipBtn").hidden = true;
+    renderSearch(q);
+  } else if (seg[0] === "person" && seg[1]) {
+    clearIntro(); introDone = true;
+    document.getElementById("introOverlay").hidden = true;
+    document.getElementById("skipBtn").hidden = true;
+    renderPerson(seg[1]);
+  } else if (seg[0] === "parent" && seg[1]) {
+    clearIntro(); introDone = true;
+    document.getElementById("introOverlay").hidden = true;
+    document.getElementById("skipBtn").hidden = true;
+    renderParent(seg[1]);
+  } else {
+    go("/");
+    return;
+  }
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+document.getElementById("skipBtn").addEventListener("click", endIntro);
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
