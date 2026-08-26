@@ -97,9 +97,15 @@
   /* ---------- 인트로 ---------- */
   #introOverlay{
     position:fixed;inset:0;z-index:60;background:var(--paper);
-    display:grid;place-items:center;padding:24px;
+    display:grid;place-items:center;padding:24px;overflow:hidden;
     transition:opacity .75s ease;
   }
+  #introOverlay::before,#introOverlay::after{content:'';position:absolute;border-radius:50%;
+    filter:blur(2px);opacity:.5;animation:floaty 9s ease-in-out infinite}
+  #introOverlay::before{width:220px;height:220px;background:var(--purple-soft);left:-60px;top:12%}
+  #introOverlay::after{width:180px;height:180px;background:var(--pink-soft);right:-50px;bottom:14%;
+    animation-delay:-4s}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
   #introOverlay.gone{opacity:0;pointer-events:none}
   .intro-line{
     max-width:1000px;text-align:center;font-weight:800;
@@ -112,7 +118,7 @@
   #skipBtn{
     position:fixed;top:20px;right:22px;z-index:70;
     font-size:13px;font-weight:600;color:var(--ink3);
-    padding:8px 14px;border:1px solid var(--line2);border-radius:999px;
+    padding:9px 16px;border:1px solid transparent;border-radius:999px;background:var(--paper2);
     background:rgba(255,253,247,.75);backdrop-filter:blur(4px);
     transition:color .2s,border-color .2s;
   }
@@ -124,28 +130,32 @@
   .reveal.on{opacity:1;transform:none}
 
   /* ---------- 검색 ---------- */
-  .searchbar{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:10px 2px}
+  .searchbar{display:flex;align-items:center;gap:8px;background:var(--paper2);
+    border:1px solid transparent;border-radius:999px;padding:7px 7px 7px 22px;
+    box-shadow:0 6px 20px rgba(40,30,20,.05);
+    transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+  .searchbar:focus-within{border-color:var(--purple);box-shadow:0 10px 28px rgba(122,78,158,.14)}
   .searchbar input{
     flex:1;min-width:0;background:transparent;border:0;outline:none;
-    font-size:clamp(17px,2.2vw,22px);font-weight:600;color:var(--ink);padding:6px 2px;
+    font-size:clamp(15.5px,1.5vw,18px);font-weight:600;color:var(--ink);padding:10px 0;
   }
-  .searchbar input::placeholder{color:#A99F8D;font-weight:500}
+  .searchbar input::placeholder{color:#6B675C;font-weight:600}
   .searchbar button{
-    flex:none;background:var(--ink);color:var(--paper2);font-weight:700;font-size:15px;
-    padding:11px 22px;border-radius:999px;transition:background .2s,transform .15s;
+    flex:none;background:var(--accent);color:var(--paper2);font-weight:800;font-size:14.5px;
+    padding:12px 24px;border-radius:999px;transition:background .25s,transform .35s var(--ease);
   }
-  .searchbar button:hover{background:var(--accent)}
+  .searchbar button:hover{background:var(--ink);transform:translateY(-1px)}
   .searchbar button:active{transform:scale(.97)}
-  .searchbar.compact{border-bottom-width:1px;border-color:var(--line2)}
-  .searchbar.compact input{font-size:16px}
-  .searchbar.compact button{padding:9px 18px;font-size:14px}
+  .searchbar.compact{padding:5px 5px 5px 18px}
+  .searchbar.compact input{font-size:15px;padding:8px 0}
+  .searchbar.compact button{padding:9px 18px;font-size:13.5px}
 
   .chip{
-    border:1px solid var(--line2);border-radius:999px;padding:10px 18px;
-    font-size:14px;font-weight:600;color:var(--ink2);background:var(--paper2);
-    transition:border-color .18s,color .18s,background .18s,transform .18s;
+    border:1px solid transparent;border-radius:999px;padding:10px 17px;
+    font-size:13.5px;font-weight:700;color:var(--ink2);background:var(--paper2);
+    box-shadow:0 3px 12px rgba(40,30,20,.04);
+    transition:color .25s,background .25s,transform .4s var(--ease);
   }
-  .chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 
   /* ---------- 카드 ---------- */
   .card{
@@ -181,7 +191,7 @@
   .tag{font-size:12px;font-weight:700;color:var(--ink2);background:var(--paper3);border-radius:999px;padding:5px 11px}
 
   /* ---------- 스켈레톤 ---------- */
-  .sk{background:linear-gradient(90deg,#EDE5D6 0%,#F7F3EA 50%,#EDE5D6 100%);background-size:220% 100%;
+  .sk{background:linear-gradient(90deg,#EAE2F0 0%,#F7F3EA 50%,#EAE2F0 100%);background-size:220% 100%;
       animation:shimmer 1.4s linear infinite;border-radius:6px}
   @keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
 
@@ -223,8 +233,8 @@
   /* ---------- 토스트 ---------- */
   #toast{
     position:fixed;left:50%;bottom:34px;transform:translate(-50%,18px);z-index:80;
-    background:var(--ink);color:var(--paper2);font-size:14.5px;font-weight:600;
-    padding:14px 22px;border-radius:999px;opacity:0;pointer-events:none;
+    background:var(--ink);color:var(--paper2);font-size:14.5px;font-weight:700;
+    padding:14px 24px;border-radius:999px;opacity:0;pointer-events:none;
     transition:opacity .28s ease,transform .35s cubic-bezier(.22,1,.36,1);
     box-shadow:0 14px 36px rgba(40,30,20,.22);max-width:88vw;text-align:center;
   }
@@ -388,18 +398,26 @@
   @media (max-width:640px){.qa-body{padding-left:20px}}
 
   /* ---------- 계정 / 모달 / 폼 ---------- */
-  .site-head{display:flex;align-items:center;gap:20px}
+  .site-bar{position:sticky;top:0;z-index:40;padding:14px 0 10px;
+            background:linear-gradient(180deg,var(--paper) 66%,rgba(248,243,232,0))}
+  .site-head{display:flex;align-items:center;gap:16px;background:var(--paper2);
+             border-radius:999px;padding:9px 14px 9px 20px;
+             box-shadow:0 8px 26px rgba(40,30,20,.06)}
+  @media (max-width:720px){ .site-head{border-radius:30px;padding:12px 14px} }
   .site-search{flex:1 1 auto;min-width:0}
+  .site-head .searchbar{box-shadow:none;background:var(--paper3);padding-left:18px}
+  .site-head .searchbar:focus-within{box-shadow:none;border-color:var(--purple)}
   @media (max-width:720px){
     .site-head{flex-wrap:wrap;gap:10px 12px}
     .site-search{order:3;flex-basis:100%}
   }
   .auth-bar{display:flex;align-items:center;gap:10px;flex:none}
   .auth-name{font-size:13px;font-weight:700;color:var(--ink2);white-space:nowrap}
-  .btn-sm{font-size:13px;font-weight:700;padding:8px 15px;border-radius:999px;white-space:nowrap;
-          border:1px solid var(--line2);color:var(--ink2);transition:border-color .18s,color .18s,background .18s}
-  .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
-  .btn-sm.solid{background:var(--ink);color:var(--paper2);border-color:var(--ink)}
+  .btn-sm{font-size:13px;font-weight:800;padding:9px 16px;border-radius:999px;white-space:nowrap;
+          border:1px solid transparent;color:var(--ink2);background:var(--paper3);
+          transition:transform .4s var(--ease),color .25s,background .25s}
+  .btn-sm:hover{color:var(--ink);background:var(--yellow-soft);transform:translateY(-2px)}
+  .btn-sm.solid{background:var(--accent);color:var(--paper2);border-color:transparent}
   .btn-sm.solid:hover{background:var(--accent);border-color:var(--accent);color:var(--paper2)}
 
   #modalRoot{position:fixed;inset:0;z-index:90;display:none;overflow-y:auto;padding:0 18px}
@@ -1475,8 +1493,8 @@ function searchbarHTML(value, compact){
 
 function siteHeader(activeQuery){
   return '' +
-  '<header class="border-b border-line bg-paper2/70 backdrop-blur sticky top-0 z-40">' +
-    '<div class="wrap py-4">' +
+  '<header class="site-bar">' +
+    '<div class="wrap">' +
       '<div class="site-head">' +
         '<a href="#/" class="brand flex-none"><span class="brand-star"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><path d="M50 14l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z" fill="#F6D96A" stroke="#F6D96A" stroke-width="14" stroke-linejoin="round"/><circle cx="40" cy="49" r="4.6" fill="#171717"/><circle cx="60" cy="49" r="4.6" fill="#171717"/><path d="M44 60q6 6 12 0" stroke="#171717" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg></span><b><span class="b1">별</span><span class="b2">의</span><span class="b3">별</span></b></a>' +
         '<div class="site-search">' + searchbarHTML(activeQuery, true) + "</div>" +
