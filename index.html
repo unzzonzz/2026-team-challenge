@@ -85,10 +85,14 @@
 
   .brand{display:inline-flex;align-items:baseline;gap:8px;font-weight:800;font-size:19px;letter-spacing:-0.03em}
   .brand small{font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.06em}
-  .brand-star{width:19px;height:19px;flex:none;background:var(--accent);display:inline-block;
-    clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
-    transition:transform .6s var(--ease)}
-  .brand:hover .brand-star{transform:rotate(72deg)}
+  .brand{gap:9px}
+  .brand-star{width:30px;height:30px;flex:none;display:inline-block;
+              transition:transform .7s var(--ease)}
+  .brand:hover .brand-star{transform:rotate(-12deg) scale(1.08)}
+  .brand b{font-weight:800}
+  .brand .b1{color:var(--purple)}
+  .brand .b2{color:var(--ink)}
+  .brand .b3{color:var(--pink)}
 
   /* ---------- 인트로 ---------- */
   #introOverlay{
@@ -470,21 +474,32 @@
            border-radius:44% 56% 38% 62% / 60% 44% 56% 40%}
 
   /* 히어로 2단 */
-  .hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
-             gap:clamp(22px,3.4vw,56px);align-items:center;width:100%}
-  .sky-wrap{position:relative;aspect-ratio:1/1;max-height:min(56vh,520px);width:100%;margin-inline:auto}
-  #skyCanvas{width:100%;height:100%;border-radius:50%;cursor:pointer}
-  .sky-hint{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);text-align:center;
-            font-size:13.5px;font-weight:700;color:var(--ink3);pointer-events:none;
-            transition:opacity .5s var(--ease);width:88%}
-  .sky-tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper2);
-           font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:999px;white-space:nowrap;
-           opacity:0;transform:translate(-50%,-140%);transition:opacity .22s ease}
-  .sky-tip.on{opacity:1}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
+             gap:clamp(22px,3.4vw,54px);align-items:center;width:100%}
+  .t-pick{font-size:13px;font-weight:800;color:var(--ink3);margin:0 0 14px;letter-spacing:.02em}
+  .picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .pick{display:flex;align-items:center;gap:13px;padding:15px 17px;border-radius:26px;
+        background:var(--paper2);text-align:left;position:relative;overflow:hidden;
+        transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+  .pick:nth-child(4n+2){border-radius:26px 26px 26px 52px}
+  .pick:nth-child(4n+3){border-radius:52px 26px 26px 26px}
+  .pick[data-tone="green"] {background:var(--green-soft)}
+  .pick[data-tone="purple"]{background:var(--purple-soft)}
+  .pick[data-tone="pink"]  {background:var(--pink-soft)}
+  .pick[data-tone="orange"]{background:var(--orange-soft)}
+  .pick[data-tone="blue"]  {background:var(--blue-soft)}
+  .pick[data-tone="yellow"]{background:var(--yellow-soft)}
+  .pick:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(40,30,20,.09)}
+  .pick:hover .pick-fig{transform:translateY(-3px) rotate(-7deg)}
+  .pick-fig{width:40px;height:40px;flex:none;transition:transform .55s var(--ease)}
+  .pick-name{font-size:14.5px;font-weight:800;letter-spacing:-0.03em;line-height:1.3;flex:1}
+  .pick-n{font-size:12px;font-weight:800;color:var(--ink3);background:rgba(255,253,247,.75);
+          border-radius:999px;padding:4px 9px;flex:none}
   @media (max-width:900px){
     .hero-grid{grid-template-columns:1fr}
-    .sky-wrap{max-height:44vh;order:2}
+    .picks{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
+  @media (max-width:460px){ .picks{grid-template-columns:1fr} }
 
   /* 상세 헤더 캐릭터 */
   .person-hero{display:flex;align-items:center;gap:clamp(18px,3vw,34px);flex-wrap:wrap}
@@ -1463,7 +1478,7 @@ function siteHeader(activeQuery){
   '<header class="border-b border-line bg-paper2/70 backdrop-blur sticky top-0 z-40">' +
     '<div class="wrap py-4">' +
       '<div class="site-head">' +
-        '<a href="#/" class="brand flex-none"><i class="brand-star"></i>별의별</a>' +
+        '<a href="#/" class="brand flex-none"><span class="brand-star"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><path d="M50 14l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z" fill="#F6D96A" stroke="#F6D96A" stroke-width="14" stroke-linejoin="round"/><circle cx="40" cy="49" r="4.6" fill="#171717"/><circle cx="60" cy="49" r="4.6" fill="#171717"/><path d="M44 60q6 6 12 0" stroke="#171717" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg></span><b><span class="b1">별</span><span class="b2">의</span><span class="b3">별</span></b></a>' +
         '<div class="site-search">' + searchbarHTML(activeQuery, true) + "</div>" +
         authBarHTML() +
       "</div>" +
@@ -1567,7 +1582,7 @@ function sec1(){
   '<section id="s1" class="sec sec-hero">' +
     '<div class="hero-head">' +
       '<div class="wrap flex items-center justify-between gap-4">' +
-        '<a href="#/" class="brand"><i class="brand-star"></i>별의별</a>' + authBarHTML() +
+        '<a href="#/" class="brand"><span class="brand-star"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><path d="M50 14l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z" fill="#F6D96A" stroke="#F6D96A" stroke-width="14" stroke-linejoin="round"/><circle cx="40" cy="49" r="4.6" fill="#171717"/><circle cx="60" cy="49" r="4.6" fill="#171717"/><path d="M44 60q6 6 12 0" stroke="#171717" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg></span><b><span class="b1">별</span><span class="b2">의</span><span class="b3">별</span></b></a>' + authBarHTML() +
       "</div>" +
     "</div>" +
     '<div class="hero-body">' +
@@ -1588,10 +1603,19 @@ function sec1(){
             '<button id="replayIntro" class="underline underline-offset-4 decoration-line2 hover:text-ink transition-colors">인트로 다시 보기</button>' +
           "</div>" +
         "</div>" +
-        '<div class="sky-wrap reveal">' +
-          '<canvas id="skyCanvas" aria-label="서른 명이 별처럼 떠 있는 영역. 누르면 그 사람 이야기로 갑니다"></canvas>' +
-          '<div class="sky-tip" id="skyTip"></div>' +
-          '<p class="sky-hint" id="skyHint">별 하나가 사람 한 명이야. 눌러봐.</p>' +
+        '<div class="reveal">' +
+          '<p class="t-pick">어떤 길이 궁금해?</p>' +
+          '<div class="picks">' +
+            ROUTE_GROUPS.map(g => {
+              const rep = PEOPLE.find(x => groupOf(x) === g.tag) || PEOPLE[0];
+              const f = figOf(rep);
+              return '<button class="pick" data-tone="' + f.tone + '" data-q="' + esc(g.query) + '">' +
+                       '<span class="pick-fig">' + figSVG(rep) + "</span>" +
+                       '<span class="pick-name">' + esc(g.label) + "</span>" +
+                       '<span class="pick-n">' + routeCount(g.tag) + "명</span>" +
+                     "</button>";
+            }).join("") +
+          "</div>" +
         "</div>" +
       "</div>" +
     "</div>" +
@@ -1731,7 +1755,7 @@ function sec9(){
   '<footer class="border-t border-line py-12">' +
     '<div class="wrap flex flex-wrap items-end justify-between gap-6">' +
       "<div>" +
-        '<div class="brand mb-2"><i class="brand-star"></i>별의별</div>' +
+        '<div class="brand mb-2"><span class="brand-star"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><path d="M50 14l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z" fill="#F6D96A" stroke="#F6D96A" stroke-width="14" stroke-linejoin="round"/><circle cx="40" cy="49" r="4.6" fill="#171717"/><circle cx="60" cy="49" r="4.6" fill="#171717"/><path d="M44 60q6 6 12 0" stroke="#171717" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg></span><b><span class="b1">별</span><span class="b2">의</span><span class="b3">별</span></b></div>' +
         '<p class="text-[13.5px] text-ink3">부모님이 반대할 때, 그 길을 이미 걸어본 사람의 이야기를 찾아주는 곳.</p>' +
       "</div>" +
       '<p class="text-[12.5px] text-ink3">AI는 검색과 번역을 하고, 설득은 사람이 합니다.</p>' +
@@ -1845,7 +1869,7 @@ function renderLanding(){
     if (person) { go("/person/" + person.getAttribute("data-person")); return; }
     const goto = e.target.closest("[data-goto]");
     if (goto) { scrollToSection(goto.getAttribute("data-goto")); return; }
-    const rt = e.target.closest(".rt-g");
+    const rt = e.target.closest(".rt-g") || e.target.closest(".pick");
     if (rt) { go("/search?q=" + encodeURIComponent(rt.getAttribute("data-q"))); }
   });
   app.addEventListener("keydown", e => {
@@ -1866,7 +1890,6 @@ function renderLanding(){
 
   document.documentElement.classList.add("snap");
   initLanding();
-  initSky();
 
   if (!introDone) runIntro();
   else { document.getElementById("introOverlay").hidden = true; playReveal(app, "#s1 .reveal", 90); }
@@ -2227,114 +2250,6 @@ addEventListener("pointermove", e => { eyePointer.x = e.clientX; eyePointer.y = 
   }
   setTimeout(() => requestAnimationFrame(eyeLoop), 70);
 })();
-
-/* ============================================================
-   Canvas — 별하늘. 30명이 하나씩 별이 되어 떠 있다.
-   커서가 가까이 가면 약하게 끌려오고, 누르면 그 사람 이야기로 간다.
-   ============================================================ */
-let skyStop = null;
-function initSky(){
-  const cv = document.getElementById("skyCanvas");
-  if (!cv) return;
-  const ctx = cv.getContext("2d");
-  const tip = document.getElementById("skyTip");
-  let W = 0, H = 0, raf = 0, hover = null;
-  const pt = { x:-9999, y:-9999, on:false };
-
-  function resize(){
-    const r = cv.getBoundingClientRect();
-    if (!r.width) return;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    W = r.width; H = r.height;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    place();
-  }
-  const stars = PEOPLE.map(p => ({ p, x:0, y:0, vx:0, vy:0, r:0, rTo:0, a:Math.random() * 7, ph:Math.random() * 7 }));
-  function place(){
-    stars.forEach((s, i) => {
-      const ring = i % 3, idx = Math.floor(i / 3);
-      const ang = (idx / 10) * Math.PI * 2 + ring * .7;
-      const d = (0.20 + ring * 0.115) * Math.min(W, H);
-      s.hx = W / 2 + Math.cos(ang) * d;
-      s.hy = H / 2 + Math.sin(ang) * d;
-      if (!s.x) { s.x = s.hx; s.y = s.hy; }
-      s.rTo = Math.min(W, H) * (s.p.regret.level === "많이 있음" ? .036 : .03);
-    });
-  }
-  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-
-  function draw(){
-    ctx.clearRect(0, 0, W, H);
-    ctx.save();
-    ctx.beginPath(); ctx.arc(W / 2, H / 2, Math.min(W, H) / 2 - 1, 0, 7);
-    ctx.fillStyle = css("--paper3"); ctx.globalAlpha = .7; ctx.fill(); ctx.restore();
-
-    let near = null, nearD = 1e9;
-    for (const s of stars){
-      s.ph += .006;
-      const hx = s.hx + Math.sin(s.ph) * 7, hy = s.hy + Math.cos(s.ph * .8) * 7;
-      s.vx += (hx - s.x) * .006; s.vy += (hy - s.y) * .006;
-      if (pt.on){
-        const dx = pt.x - s.x, dy = pt.y - s.y, d2 = dx * dx + dy * dy;
-        if (d2 < 130 * 130 && d2 > 1){
-          const d = Math.sqrt(d2), f = (1 - d / 130) * .09;
-          s.vx += dx / d * f; s.vy += dy / d * f;
-          if (d < nearD && d < 42){ nearD = d; near = s; }
-        }
-      }
-      s.vx *= .93; s.vy *= .93;
-      s.x += s.vx; s.y += s.vy;
-      s.r += ((near === s ? s.rTo * 1.5 : s.rTo) - s.r) * .12;
-
-      ctx.save();
-      ctx.translate(s.x, s.y);
-      ctx.scale(s.r / 50, s.r / 50);
-      ctx.translate(-50, -50);
-      ctx.globalAlpha = near && near !== s ? .5 : 1;
-      const f = figOf(s.p);
-      ctx.fillStyle = css("--" + f.tone);
-      ctx.fill(new Path2D(SHAPE_D[f.shape]));
-      if (near === s){
-        ctx.fillStyle = css("--ink");
-        ctx.beginPath(); ctx.arc(38, 47, 5, 0, 7); ctx.arc(62, 47, 5, 0, 7); ctx.fill();
-      }
-      ctx.restore();
-    }
-    ctx.globalAlpha = 1;
-    hover = near;
-    cv.style.cursor = near ? "pointer" : "default";
-    if (tip){
-      if (near){
-        const r = cv.getBoundingClientRect();
-        tip.style.left = near.x + "px"; tip.style.top = near.y + "px";
-        tip.textContent = near.p.name + " · " + near.p.currentJob;
-        tip.classList.add("on");
-      } else tip.classList.remove("on");
-    }
-    raf = requestAnimationFrame(draw);
-  }
-
-  function move(e){ const r = cv.getBoundingClientRect(); pt.x = e.clientX - r.left; pt.y = e.clientY - r.top; pt.on = true; }
-  function leave(){ pt.on = false; pt.x = pt.y = -9999; }
-  function click(){ if (hover) go("/person/" + hover.p.id); }
-  cv.addEventListener("pointermove", move, { passive:true });
-  cv.addEventListener("pointerleave", leave);
-  cv.addEventListener("click", click);
-  addEventListener("resize", resize);
-
-  resize();
-  if (REDUCED) { draw(); cancelAnimationFrame(raf); }
-  else raf = requestAnimationFrame(draw);
-
-  skyStop = () => {
-    cancelAnimationFrame(raf);
-    cv.removeEventListener("pointermove", move);
-    cv.removeEventListener("pointerleave", leave);
-    cv.removeEventListener("click", click);
-    removeEventListener("resize", resize);
-  };
-}
 
 /* ============================================================
    랜딩 섹션 인터랙션
@@ -2897,7 +2812,6 @@ function route(){
   renderToken++;
   if (tlCleanup) { tlCleanup(); tlCleanup = null; }
   if (landingCleanup) { landingCleanup(); landingCleanup = null; }
-  if (skyStop) { skyStop(); skyStop = null; }
   document.documentElement.classList.remove("snap");   // 랜딩에서만 다시 켠다
   document.body.classList.remove("parent-view");
 
